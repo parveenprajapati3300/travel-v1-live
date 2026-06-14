@@ -1,0 +1,43 @@
+import express from 'express'
+import cors from 'cors'
+import dotenv from 'dotenv'
+import connectDB from './config/db.js'
+import authRoutes from './routes/authRoutes.js'
+import contactRoutes from './routes/contactRoutes.js'
+import inquiryRoutes from './routes/inquiryRoutes.js'
+import packageRoutes from './routes/packageRoutes.js'
+import seedDefaultAdmin from './utils/seedDefaultAdmin.js'
+
+dotenv.config({ path: './server/.env' })
+await connectDB()
+await seedDefaultAdmin()
+
+const app = express()
+const PORT = process.env.PORT || 5000
+
+app.use(cors({ origin: process.env.CLIENT_URL || 'http://localhost:5173', credentials: true }))
+app.use(express.json())
+
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'ok', message: 'TripNest API is running' })
+})
+
+app.use('/api/auth', authRoutes)
+app.use('/api/packages', packageRoutes)
+app.use('/api/contact', contactRoutes)
+app.use('/api/inquiry', inquiryRoutes)
+
+app.use((req, res) => {
+  res.status(404).json({ message: 'API route not found' })
+})
+
+app.use((error, req, res, next) => {
+  const statusCode = res.statusCode === 200 ? 500 : res.statusCode
+  res.status(statusCode).json({
+    message: error.message || 'Server error',
+  })
+})
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`)
+})
