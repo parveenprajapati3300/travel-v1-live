@@ -1,7 +1,9 @@
 import { Col, Container, Row } from 'react-bootstrap'
 import { FaCalendarDays, FaHotel, FaRoute, FaUsers } from 'react-icons/fa6'
 import InquiryForm from '../components/InquiryForm'
+import PackageCard from '../components/PackageCard'
 import SectionHeading from '../components/SectionHeading'
+import { customizedPackages } from '../data/packages'
 
 const steps = [
   ['Tell us your travel style', 'Share destination, date, budget, group size, and trip mood.'],
@@ -13,6 +15,10 @@ function CustomizedTours() {
   return (
     <section className="page-section inquiry-page">
       <Container>
+        <SectionHeading eyebrow="Customized Packages" title="Dummy Custom Package Ideas" text="Pick a ready idea or share your own dates, budget, and travel style for a custom quote." />
+        <Row className="g-4 mb-5">
+          {customizedPackages.map((item) => <Col md={6} lg={4} key={item.id}><PackageCard item={item} /></Col>)}
+        </Row>
         <Row className="g-5 align-items-center">
           <Col lg={5}>
             <SectionHeading center={false} eyebrow="Customized Tours" title="Build A Trip Around Your Dates, Budget, And People" text="Use this page for personalized travel packages, honeymoon routes, family holidays, premium stays, and custom group plans." />

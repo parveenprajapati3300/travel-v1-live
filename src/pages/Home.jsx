@@ -88,7 +88,7 @@ function Home() {
         <Container>
           <div className="destination-tabs-shell">
             <div className="section-title-row">
-              <SectionHeading eyebrow="Popular Destinations" title="Handpicked Holiday Packages" text="Indulge in unforgettable adventures with special tour plans." />
+              <SectionHeading title="Popular Destinations" text="Indulge in unforgettable adventures with special tour plans." />
               <Button as={Link} to={activeDestinationTab === 'domestic' ? '/domestic' : '/international'} variant="outline-dark">
                 View All {activeDestinationTab === 'domestic' ? 'Domestic' : 'International'}
               </Button>

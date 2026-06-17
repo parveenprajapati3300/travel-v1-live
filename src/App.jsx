@@ -9,17 +9,16 @@ import AppNavbar from './components/Navbar'
 import Footer from './components/Footer'
 import ScrollToTop from './components/ScrollToTop'
 import LoadingSpinner from './components/LoadingSpinner'
-import BottomNav from './components/BottomNav'
 import Home from './pages/Home'
 import About from './pages/About'
+import Domestic from './pages/Domestic'
 import Destinations from './pages/Destinations'
 import GroupTrips from './pages/GroupTrips'
+import International from './pages/International'
 import WeekendGetaways from './pages/WeekendGetaways'
 import CustomizedTours from './pages/CustomizedTours'
 import Community from './pages/Community'
 import Blogs from './pages/Blogs'
-import Domestic from './pages/Domestic'
-import International from './pages/International'
 import PackageDetails from './pages/PackageDetails'
 import Contact from './pages/Contact'
 import Inquiry from './pages/Inquiry'
@@ -56,18 +55,18 @@ function AppRoutes() {
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
         <Route path="/destinations" element={<Destinations />} />
+        <Route path="/domestic" element={<Domestic />} />
         <Route path="/group-trips" element={<GroupTrips />} />
+        <Route path="/international" element={<International />} />
         <Route path="/weekend-getaways" element={<WeekendGetaways />} />
         <Route path="/customized-tours" element={<CustomizedTours />} />
         <Route path="/community" element={<Community />} />
         <Route path="/blogs" element={<Blogs />} />
-        <Route path="/domestic" element={<Domestic />} />
-        <Route path="/international" element={<International />} />
         <Route path="/package/:id" element={<PackageDetails />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/inquiry" element={<Inquiry />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="Dashboard" element={<Dashboard />} />
+        <Route path="/admin-login" element={<Login />} />
+           <Route path="dashboard" element={<Dashboard />} />
         <Route
           path="/admin/dashboard"
           element={(
@@ -90,7 +89,6 @@ function AppContent() {
       {!isAdminArea && <AppNavbar />}
       <AppRoutes />
       {!isAdminArea && <Footer />}
-      {!isAdminArea && <BottomNav />}
       <ScrollToTop />
     </>
   )

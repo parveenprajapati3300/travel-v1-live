@@ -1,12 +1,33 @@
 import { useEffect, useState } from 'react'
 import { Container, Nav, Navbar } from 'react-bootstrap'
 import { NavLink, useLocation } from 'react-router-dom'
-import { FaPlaneDeparture } from 'react-icons/fa6'
+import { FaChevronDown, FaChevronUp, FaPlaneDeparture } from 'react-icons/fa6'
+
+const navItems = [
+  { label: 'Home', to: '/' },
+  { label: 'Domestic Packages', to: '/domestic' },
+  { label: 'International Packages', to: '/international' },
+  { label: 'Group Trips', to: '/group-trips' },
+  { label: 'Weekend Packages', to: '/weekend-getaways' },
+  { label: 'Destinations', to: '/destinations' },
+  { label: 'Customized Packages', to: '/customized-tours' },
+  { label: 'Community', to: '/community' },
+  { label: 'Blogs', to: '/blogs' },
+  { label: 'About', to: '/about' },
+  { label: 'Contact', to: '/contact' },
+  // { label: 'Login', to: '/login' },
+  { label: 'Plan My Trip', to: '/inquiry', className: 'nav-cta' },
+]
+
+const visibleNavItems = navItems.slice(0, 5)
+const moreNavItems = navItems.slice(5)
 
 function AppNavbar() {
   const [scrolled, setScrolled] = useState(false)
+  const [moreOpen, setMoreOpen] = useState(false)
   const location = useLocation()
   const isHomeTop = location.pathname === '/' && !scrolled
+  const isMoreActive = moreNavItems.some((item) => item.to === location.pathname)
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20)
@@ -25,18 +46,41 @@ function AppNavbar() {
         <Navbar.Toggle aria-controls="main-navigation" />
         <Navbar.Collapse id="main-navigation">
           <Nav className="ms-auto align-items-lg-center gap-lg-1">
-            <Nav.Link as={NavLink} to="/">Home</Nav.Link>
-            <Nav.Link as={NavLink} to="/destinations">Destinations</Nav.Link>
-            <Nav.Link as={NavLink} to="/group-trips">Group Trips</Nav.Link>
-            <Nav.Link as={NavLink} to="/international">International</Nav.Link>
-            <Nav.Link as={NavLink} to="/weekend-getaways">Weekend</Nav.Link>
-            <Nav.Link as={NavLink} to="/customized-tours">Customized Tours</Nav.Link>
-            <Nav.Link as={NavLink} to="/community">Community</Nav.Link>
-            <Nav.Link as={NavLink} to="/blogs">Blogs</Nav.Link>
-            <Nav.Link as={NavLink} to="/about">About</Nav.Link>
-            <Nav.Link as={NavLink} to="/contact">Contact</Nav.Link>
-            <Nav.Link as={NavLink} to="/login">Login</Nav.Link>
-            <Nav.Link as={NavLink} to="/inquiry" className="nav-cta">Plan My Trip</Nav.Link>
+            {visibleNavItems.map((item) => (
+              <Nav.Link key={item.to} as={NavLink} to={item.to}>
+                {item.label}
+              </Nav.Link>
+            ))}
+            <div
+              className={`nav-more ${moreOpen ? 'is-open' : ''}`}
+              onBlur={(event) => {
+                if (!event.currentTarget.contains(event.relatedTarget)) {
+                  setMoreOpen(false)
+                }
+              }}
+            >
+              <button
+                type="button"
+                className={`nav-more-toggle ${isMoreActive ? 'active' : ''}`}
+                aria-expanded={moreOpen}
+                onClick={() => setMoreOpen((current) => !current)}
+              >
+                More {moreOpen ? <FaChevronUp /> : <FaChevronDown />}
+              </button>
+              <div className="nav-more-menu">
+                {moreNavItems.map((item) => (
+                  <Nav.Link
+                    key={item.to}
+                    as={NavLink}
+                    to={item.to}
+                    className={item.className || ''}
+                    onClick={() => setMoreOpen(false)}
+                  >
+                    {item.label}
+                  </Nav.Link>
+                ))}
+              </div>
+            </div>
           </Nav>
         </Navbar.Collapse>
       </Container>
