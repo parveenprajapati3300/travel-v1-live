@@ -24,7 +24,6 @@ function Domestic() {
     <section className="page-section soft-bg listing-page">
       <Container>
         <SectionHeading eyebrow="Destinations" title="Explore India Your Way" text="Filter domestic group trips, weekend getaways, family holidays, and customized tours by duration, style, and season." />
-       
         <Row className="g-4">
           {items.map((item) => <Col md={6} lg={4} key={item._id || item.id}><PackageCard item={item} /></Col>)}
         </Row>
