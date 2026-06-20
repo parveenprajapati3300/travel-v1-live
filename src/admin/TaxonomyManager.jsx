@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Alert, Button, Col, Form, Modal, Row, Table } from 'react-bootstrap'
 import { FaArrowLeft, FaCloudArrowUp, FaPen, FaPlus, FaTrash } from 'react-icons/fa6'
+import AdminPagination, { PAGE_SIZE } from './AdminPagination'
 
 const initialForm = {
   name: '',
@@ -18,6 +19,13 @@ function TaxonomyManager({ items, title, label, includePrice = false, includeTyp
   const [fieldErrors, setFieldErrors] = useState({})
   const [uploadingImage, setUploadingImage] = useState(false)
   const [previewImage, setPreviewImage] = useState('')
+  const [currentPage, setCurrentPage] = useState(1)
+  const totalPages = Math.max(1, Math.ceil(items.length / PAGE_SIZE))
+  const activePage = Math.min(currentPage, totalPages)
+  const paginatedItems = useMemo(
+    () => items.slice((activePage - 1) * PAGE_SIZE, activePage * PAGE_SIZE),
+    [activePage, items],
+  )
 
   const updateField = (event) => {
     const { name, value } = event.target
@@ -242,7 +250,7 @@ function TaxonomyManager({ items, title, label, includePrice = false, includeTyp
             </tr>
           </thead>
           <tbody>
-            {items.map((item) => (
+            {paginatedItems.map((item) => (
               <tr key={item._id}>
                 <td><strong>{item.name}</strong></td>
                 {includeType && <td><span className="status-pill done">{item.type}</span></td>}
@@ -267,6 +275,7 @@ function TaxonomyManager({ items, title, label, includePrice = false, includeTyp
           </tbody>
         </Table>
       </div>
+      <AdminPagination currentPage={activePage} onPageChange={setCurrentPage} totalItems={items.length} />
 
       <Modal show={Boolean(previewImage)} onHide={() => setPreviewImage('')} centered size="xl" className="admin-image-modal">
         <Modal.Header closeButton>

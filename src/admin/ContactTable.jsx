@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Button, Modal, Table } from 'react-bootstrap'
 import { FaEye, FaTrash } from 'react-icons/fa6'
+import AdminPagination, { PAGE_SIZE } from './AdminPagination'
 
 const formatDate = (date) =>
   new Intl.DateTimeFormat('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }).format(new Date(date))
@@ -16,6 +17,13 @@ const formatDateTime = (date) =>
 
 function ContactTable({ contacts, onDelete }) {
   const [selectedContact, setSelectedContact] = useState(null)
+  const [currentPage, setCurrentPage] = useState(1)
+  const totalPages = Math.max(1, Math.ceil(contacts.length / PAGE_SIZE))
+  const activePage = Math.min(currentPage, totalPages)
+  const paginatedContacts = useMemo(
+    () => contacts.slice((activePage - 1) * PAGE_SIZE, activePage * PAGE_SIZE),
+    [activePage, contacts],
+  )
 
   return (
     <>
@@ -36,7 +44,7 @@ function ContactTable({ contacts, onDelete }) {
               </tr>
             </thead>
             <tbody>
-              {contacts.map((item) => (
+              {paginatedContacts.map((item) => (
                 <tr key={item._id}>
                   <td>
                     <strong>{item.name}</strong>
@@ -59,6 +67,7 @@ function ContactTable({ contacts, onDelete }) {
             </tbody>
           </Table>
         </div>
+        <AdminPagination currentPage={activePage} onPageChange={setCurrentPage} totalItems={contacts.length} />
       </div>
 
       <Modal show={Boolean(selectedContact)} onHide={() => setSelectedContact(null)} centered size="lg" className="admin-detail-modal">

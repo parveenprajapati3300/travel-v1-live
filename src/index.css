@@ -3750,6 +3750,29 @@ body.gallery-lightbox-open {
   margin: 0;
 }
 
+.admin-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.1rem;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 0.88rem;
+  font-weight: 800;
+}
+
+.admin-pagination > div {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.admin-pagination strong {
+  color: var(--ink);
+  font-size: 0.86rem;
+}
+
 .admin-table th {
   color: var(--muted);
   font-size: 0.74rem;
@@ -4589,6 +4612,15 @@ body.gallery-lightbox-open {
   .admin-view-header {
     align-items: stretch;
     flex-direction: column;
+  }
+
+  .admin-pagination {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .admin-pagination > div {
+    justify-content: space-between;
   }
 
   .admin-view-header .btn {

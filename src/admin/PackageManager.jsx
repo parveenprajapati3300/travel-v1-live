@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { Alert, Button, Col, Form, Modal, Row, Table } from 'react-bootstrap'
 import { FaArrowLeft, FaCloudArrowUp, FaImages, FaPen, FaPlus, FaTrash } from 'react-icons/fa6'
+import AdminPagination, { PAGE_SIZE } from './AdminPagination'
 
 const durationOptions = [
   { label: '1 Day / 1 Night', days: 1 },
@@ -57,8 +58,15 @@ function PackageManager({ packages, destinations = [], categories = [], onCreate
   const [uploadingGallery, setUploadingGallery] = useState(false)
   const [replacingGalleryIndex, setReplacingGalleryIndex] = useState(null)
   const [previewImage, setPreviewImage] = useState('')
+  const [currentPage, setCurrentPage] = useState(1)
 
   const selectedDays = useMemo(() => durationToDays(form.duration), [form.duration])
+  const totalPages = Math.max(1, Math.ceil(packages.length / PAGE_SIZE))
+  const activePage = Math.min(currentPage, totalPages)
+  const paginatedPackages = useMemo(
+    () => packages.slice((activePage - 1) * PAGE_SIZE, activePage * PAGE_SIZE),
+    [activePage, packages],
+  )
   const galleryImages = useMemo(() => listToText(form.gallery).split(',').map((item) => item.trim()).filter(Boolean), [form.gallery])
   const destinationOptions = useMemo(() => {
     const activeNames = destinations
@@ -521,7 +529,7 @@ function PackageManager({ packages, destinations = [], categories = [], onCreate
             </tr>
           </thead>
           <tbody>
-            {packages.map((item) => (
+            {paginatedPackages.map((item) => (
               <tr key={item._id}>
                 <td>
                   <strong>{item.title}</strong>
@@ -547,6 +555,7 @@ function PackageManager({ packages, destinations = [], categories = [], onCreate
           </tbody>
         </Table>
       </div>
+      <AdminPagination currentPage={activePage} onPageChange={setCurrentPage} totalItems={packages.length} />
     </div>
   )
 }

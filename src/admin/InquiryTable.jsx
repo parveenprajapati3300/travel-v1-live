@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Button, Modal, Table } from 'react-bootstrap'
 import { FaEye, FaTrash } from 'react-icons/fa6'
+import AdminPagination, { PAGE_SIZE } from './AdminPagination'
 
 const formatDate = (date) =>
   new Intl.DateTimeFormat('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }).format(new Date(date))
@@ -16,6 +17,13 @@ const formatDateTime = (date) =>
 
 function InquiryTable({ inquiries, onDelete }) {
   const [selectedInquiry, setSelectedInquiry] = useState(null)
+  const [currentPage, setCurrentPage] = useState(1)
+  const totalPages = Math.max(1, Math.ceil(inquiries.length / PAGE_SIZE))
+  const activePage = Math.min(currentPage, totalPages)
+  const paginatedInquiries = useMemo(
+    () => inquiries.slice((activePage - 1) * PAGE_SIZE, activePage * PAGE_SIZE),
+    [activePage, inquiries],
+  )
 
   return (
     <>
@@ -37,7 +45,7 @@ function InquiryTable({ inquiries, onDelete }) {
               </tr>
             </thead>
             <tbody>
-              {inquiries.map((item) => (
+              {paginatedInquiries.map((item) => (
                 <tr key={item._id}>
                   <td>
                     <strong>{item.name}</strong>
@@ -61,6 +69,7 @@ function InquiryTable({ inquiries, onDelete }) {
             </tbody>
           </Table>
         </div>
+        <AdminPagination currentPage={activePage} onPageChange={setCurrentPage} totalItems={inquiries.length} />
       </div>
 
       <Modal show={Boolean(selectedInquiry)} onHide={() => setSelectedInquiry(null)} centered size="lg" className="admin-detail-modal">
