@@ -40,6 +40,8 @@ const toBoolean = (value) => {
   return value === 'active' || value === 'true'
 }
 
+const escapeRegex = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+
 const normalizePackagePayload = (body) => ({
   id: body.id ? slugify(body.id) : slugify(body.title),
   category: body.category,
@@ -66,6 +68,14 @@ const normalizePackagePayload = (body) => ({
 export const getPackages = async (req, res) => {
   const filter = {}
   if (req.query.category) filter.category = req.query.category
+  if (req.query.packageCategory) filter.packageCategories = new RegExp(`^${escapeRegex(req.query.packageCategory)}$`, 'i')
+  if (req.query.destination) {
+    const destination = escapeRegex(req.query.destination)
+    filter.$or = [
+      { packageDestination: new RegExp(`^${destination}$`, 'i') },
+      { location: new RegExp(destination, 'i') },
+    ]
+  }
   if (req.query.includeInactive !== 'true') filter.isActive = true
 
   const packages = await Package.find(filter).sort({ createdAt: -1 })

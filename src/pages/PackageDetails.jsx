@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Accordion, Badge, Button, Col, Container, Modal, Row, Tab, Tabs, Toast, ToastContainer } from 'react-bootstrap'
 import { Link, useParams } from 'react-router-dom'
-import { FaBed, FaBus, FaCheck, FaClock, FaIndianRupeeSign, FaLocationDot, FaStar, FaTags, FaXmark } from 'react-icons/fa6'
+import { FaBed, FaBus, FaClock, FaIndianRupeeSign, FaLocationDot, FaStar, FaTags } from 'react-icons/fa6'
 import Gallery from '../components/Gallery'
 import InquiryForm from '../components/InquiryForm'
 import PackageCard from '../components/PackageCard'
@@ -127,6 +127,11 @@ function PackageDetails() {
 
       <section className="section details-page-body">
         <Container>
+          <div className="detail-block package-gallery-section" data-aos="fade-up">
+            <h2>Gallery</h2>
+            <Gallery customImages={gallery} />
+          </div>
+
           <Row className="g-5">
             <Col lg={8}>
               <div className="detail-block detail-tabs" data-aos="fade-up">
@@ -158,16 +163,15 @@ function PackageDetails() {
                     <Row className="g-4">
                       <Col md={6}>
                         <h3>Included</h3>
-                        <ul className="icon-list">{included.map((entry) => <li key={entry}><FaCheck /> {entry}</li>)}</ul>
+                        {/* <ul className="icon-list">{included.map((entry) => <li key={entry}><FaCheck /> {entry}</li>)}</ul> */}
+                        <p>{included}</p>
                       </Col>
                       <Col md={6}>
                         <h3>Excluded</h3>
-                        <ul className="icon-list excluded">{excluded.map((entry) => <li key={entry}><FaXmark /> {entry}</li>)}</ul>
+                        {/* <ul className="icon-list excluded">{excluded.map((entry) => <li key={entry}><FaXmark /> {entry}</li>)}</ul> */}
+                         <p>{excluded}</p>
                       </Col>
                     </Row>
-                  </Tab>
-                  <Tab eventKey="gallery" title="Gallery">
-                    <Gallery customImages={gallery} />
                   </Tab>
                   <Tab eventKey="reviews" title="Reviews">
                     <Row className="g-3">
@@ -199,7 +203,7 @@ function PackageDetails() {
                 </Col>
               </Row>
 
-              <div className="detail-block" data-aos="fade-up">
+              <div className="detail-block mt-4" data-aos="fade-up">
                 <h2>FAQ</h2>
                 <Accordion>
                   {faqs.map(([question, answer], index) => (

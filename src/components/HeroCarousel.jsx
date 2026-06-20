@@ -1,6 +1,5 @@
-import { Button, Carousel, Container } from 'react-bootstrap'
-import { Link } from 'react-router-dom'
-import { FaArrowRight, FaLocationDot, FaStar } from 'react-icons/fa6'
+import { Carousel, Container } from 'react-bootstrap'
+import { FaStar } from 'react-icons/fa6'
 import SearchTour from './SearchTour'
 
 const slides = [
@@ -99,23 +98,12 @@ function HeroCarousel() {
                         ))}
                       </div>
                     </div>
-                    {/* <div className="hero-wravel-actions">
-                      <Button as={Link} to="/domestic" className="btn-gradient">Explore Trips <FaArrowRight /></Button>
-                      <Button as={Link} to="/inquiry" variant="light">Customize Tour</Button>
-                    </div> */}
                   </div>
                 ) : (
                   <div className="hero-content" data-aos="fade-right">
                     <span className="eyebrow"><FaStar /> {slide.tag}</span>
                     <h1>{slide.title}</h1>
                     <p>{slide.text}</p>
-                    <div className="hero-actions">
-                      <Button as={Link} to="/domestic" className="btn-gradient">Explore Trips <FaArrowRight /></Button>
-                      <Button as={Link} to="/inquiry" variant="light">Customize Tour</Button>
-                    </div>
-                    <div className="hero-search-wrap">
-                      <SearchTour />
-                    </div>
                   </div>
                 )}
               </Container>
@@ -123,6 +111,11 @@ function HeroCarousel() {
           </Carousel.Item>
         ))}
       </Carousel>
+      <div className="hero-fixed-search">
+        <Container>
+          <SearchTour />
+        </Container>
+      </div>
     </section>
   )
 }

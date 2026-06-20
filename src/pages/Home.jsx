@@ -16,9 +16,10 @@ import PackageCard from '../components/PackageCard'
 import SectionHeading from '../components/SectionHeading'
 import Testimonial from '../components/Testimonial'
 import { domesticPackages, internationalPackages } from '../data/packages'
-import { getPackages } from '../services/api'
+import { getCategories, getDestinations, getPackages } from '../services/api'
+import { slugify } from '../utils/slug'
 
-const destinations = [
+const fallbackDestinations = [
   { name: 'Leh Ladakh', type: 'Domestic', duration: '7 Days', price: 32999, image: 'https://images.unsplash.com/photo-1581793745862-99fde7fa73d2?auto=format&fit=crop&w=900&q=80' },
   { name: 'Spiti Valley', type: 'Domestic', duration: '8 Days', price: 28999, image: 'https://images.unsplash.com/photo-1628082305368-2e772d6c6d76?auto=format&fit=crop&w=900&q=80' },
   { name: 'Kerala', type: 'Domestic', duration: '6 Days', price: 38999, image: 'https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=900&q=80' },
@@ -30,9 +31,16 @@ const destinations = [
 ]
 
 const groupTrips = [
-  { destination: 'Leh Ladakh Bike Expedition', dates: '12 Jul - 18 Jul', image: destinations[0].image },
-  { destination: 'Spiti Valley Backpacking', dates: '2 Aug - 9 Aug', image: destinations[1].image },
-  { destination: 'Vietnam Community Trail', dates: '18 Sep - 24 Sep', image: destinations[5].image },
+  { destination: 'Leh Ladakh Bike Expedition', dates: '12 Jul - 18 Jul', image: fallbackDestinations[0].image },
+  { destination: 'Spiti Valley Backpacking', dates: '2 Aug - 9 Aug', image: fallbackDestinations[4].image },
+  { destination: 'Vietnam Community Trail', dates: '18 Sep - 24 Sep', image: fallbackDestinations[5].image },
+]
+
+const fallbackCategories = [
+  { name: 'Group Tour', image: fallbackDestinations[0].image },
+  { name: 'Honeymoon Tour', image: fallbackDestinations[4].image },
+  { name: 'Solo Trip', image: fallbackDestinations[1].image },
+  { name: 'Weekend Tour', image: fallbackDestinations[2].image },
 ]
 
 const stories = [
@@ -41,28 +49,55 @@ const stories = [
   ['Kabir Sethi', 'Dubai family getaway', 'Fast callback, clear inclusions, and smooth transfers from airport to hotel.'],
 ]
 
+const communityImages = [
+  {
+    name: 'Group travel friends',
+    image: 'https://images.unsplash.com/photo-1506869640319-fe1a24fd76dc?auto=format&fit=crop&w=900&q=80',
+  },
+  {
+    name: 'Mountain travel community',
+    image: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=900&q=80',
+  },
+  {
+    name: 'Beach travel meetup',
+    image: 'https://images.unsplash.com/photo-1517457373958-b7bdd4587205?auto=format&fit=crop&w=900&q=80',
+  },
+  {
+    name: 'Adventure travelers',
+    image: 'https://images.unsplash.com/photo-1527631746610-bca00a040d60?auto=format&fit=crop&w=900&q=80',
+  },
+]
+
 function Home() {
   const [homeDomesticPackages, setHomeDomesticPackages] = useState(domesticPackages)
   const [homeInternationalPackages, setHomeInternationalPackages] = useState(internationalPackages)
+  const [homeDestinations, setHomeDestinations] = useState(fallbackDestinations)
+  const [homeCategories, setHomeCategories] = useState(fallbackCategories)
   const [activeDestinationTab, setActiveDestinationTab] = useState('domestic')
   const [activePackageTab, setActivePackageTab] = useState('domestic')
 
   useEffect(() => {
-    Promise.all([getPackages('domestic'), getPackages('international')])
-      .then(([domesticResponse, internationalResponse]) => {
+    Promise.all([getPackages('domestic'), getPackages('international'), getDestinations(), getCategories()])
+      .then(([domesticResponse, internationalResponse, destinationResponse, categoryResponse]) => {
         setHomeDomesticPackages(domesticResponse.data.length ? domesticResponse.data : domesticPackages)
         setHomeInternationalPackages(internationalResponse.data.length ? internationalResponse.data : internationalPackages)
+        setHomeDestinations(destinationResponse.data.length ? destinationResponse.data : fallbackDestinations)
+        setHomeCategories(categoryResponse.data.length ? categoryResponse.data : fallbackCategories)
       })
       .catch(() => {
         setHomeDomesticPackages(domesticPackages)
         setHomeInternationalPackages(internationalPackages)
+        setHomeDestinations(fallbackDestinations)
+        setHomeCategories(fallbackCategories)
       })
   }, [])
 
   const activePackages = activePackageTab === 'domestic' ? homeDomesticPackages : homeInternationalPackages
   const activeRoute = activePackageTab === 'domestic' ? '/domestic' : '/international'
   const activeViewLabel = activePackageTab === 'domestic' ? 'Domestic' : 'International'
-  const activeDestinations = destinations.filter((destination) => destination.type.toLowerCase() === activeDestinationTab)
+  const activeDestinations = homeDestinations
+    .filter((destination) => (destination.type || 'domestic').toLowerCase() === activeDestinationTab)
+    .slice(0, 4)
 
   return (
     <>
@@ -84,8 +119,8 @@ function Home() {
           <div className="destination-tabs-shell">
             <div className="section-title-row">
               <SectionHeading title="Popular Destinations" text="Indulge in unforgettable adventures with special tour plans." />
-              <Button as={Link} to={activeDestinationTab === 'domestic' ? '/domestic' : '/international'} variant="outline-dark">
-                View All {activeDestinationTab === 'domestic' ? 'Domestic' : 'International'}
+              <Button as={Link} to={`/destinations?type=${activeDestinationTab}`} variant="outline-dark">
+                View More
               </Button>
             </div>
             <div className="package-tabs" role="tablist" aria-label="Destination categories">
@@ -100,15 +135,13 @@ function Home() {
               {activeDestinations.map((destination) => (
                 <Col md={6} lg={3} key={destination.name}>
                   <article className="destination-standard-card" data-aos="fade-up">
-                    <img src={destination.image} alt={destination.name} />
+                    <Link className="destination-image-link" to={`/destination/${slugify(destination.name)}`} aria-label={`Explore ${destination.name}`}>
+                      <img src={destination.image} alt={destination.name} />
+                    </Link>
                     <div>
                       <h3>{destination.name}</h3>
-                      <div className="destination-meta-line">
-                        <strong>{destination.duration}</strong>
-                        <span>From</span>
-                      </div>
-                      <p>Rs {destination.price.toLocaleString('en-IN')}</p>
-                      <Link to="/inquiry">Explore <FaArrowRight /></Link>
+                      <p><span>From</span> Rs {destination.price.toLocaleString('en-IN')}</p>
+                      <Link to={`/destination/${slugify(destination.name)}`}>Explore <FaArrowRight /></Link>
                     </div>
                   </article>
                 </Col>
@@ -120,18 +153,17 @@ function Home() {
 
       <section className="section soft-bg">
         <Container>
-          <SectionHeading eyebrow="Upcoming Group Trips" title="Fixed Departures With Fellow Travelers" text="Join curated group adventures with shared energy, managed stays, transport, and on-trip coordination." />
+          <div className="section-title-row">
+            <SectionHeading eyebrow="Themes" title="Holidays By Theme" text="Choose a travel style and see packages created under that category." />
+          </div>
           <Row className="g-4">
-            {groupTrips.map((trip) => (
-              <Col md={4} key={trip.destination}>
-                <article className="group-trip-card" data-aos="fade-up">
-                  <img src={trip.image} alt={trip.destination} />
-                  <div>
-                    <span><FaCalendarDays /> {trip.dates}</span>
-                    <h3>{trip.destination}</h3>
-                    <Button as={Link} to="/inquiry" className="btn-gradient">Book Now</Button>
-                  </div>
-                </article>
+            {homeCategories.slice(0, 6).map((category) => (
+              <Col md={6} lg={4} key={category._id || category.name}>
+                <Link className="theme-category-card" to={`/category/${slugify(category.name)}`} data-aos="fade-up">
+                  <img src={category.image} alt={category.name} />
+                  <span>{category.name}</span>
+                  <strong>Explore <FaArrowRight /></strong>
+                </Link>
               </Col>
             ))}
           </Row>
@@ -159,6 +191,26 @@ function Home() {
               ))}
             </Row>
           </div>
+        </Container>
+      </section>
+
+      <section className="section soft-bg">
+        <Container>
+          <SectionHeading eyebrow="Upcoming Group Trips" title="Fixed Departures With Fellow Travelers" text="Join curated group adventures with shared energy, managed stays, transport, and on-trip coordination." />
+          <Row className="g-4">
+            {groupTrips.map((trip) => (
+              <Col md={4} key={trip.destination}>
+                <article className="group-trip-card" data-aos="fade-up">
+                  <img src={trip.image} alt={trip.destination} />
+                  <div>
+                    <span><FaCalendarDays /> {trip.dates}</span>
+                    <h3>{trip.destination}</h3>
+                    <Button as={Link} to="/inquiry" className="btn-gradient">Book Now</Button>
+                  </div>
+                </article>
+              </Col>
+            ))}
+          </Row>
         </Container>
       </section>
 
@@ -215,8 +267,8 @@ function Home() {
             </Col>
             <Col lg={6}>
               <div className="community-photo-grid">
-                {destinations.slice(0, 4).map((destination) => (
-                  <img key={destination.name} src={destination.image} alt={`${destination.name} community`} />
+                {communityImages.map((item) => (
+                  <img key={item.name} src={item.image} alt={item.name} />
                 ))}
               </div>
             </Col>

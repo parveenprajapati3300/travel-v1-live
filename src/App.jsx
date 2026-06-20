@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom'
+import { BrowserRouter, Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import AOS from 'aos'
 import { AnimatePresence, motion } from 'framer-motion'
 import 'bootstrap/dist/css/bootstrap.min.css'
@@ -14,6 +14,7 @@ import Home from './pages/Home'
 import About from './pages/About'
 import Domestic from './pages/Domestic'
 import Destinations from './pages/Destinations'
+import DestinationPackages from './pages/DestinationPackages'
 import GroupTrips from './pages/GroupTrips'
 import International from './pages/International'
 import WeekendGetaways from './pages/WeekendGetaways'
@@ -21,6 +22,7 @@ import CustomizedTours from './pages/CustomizedTours'
 import Community from './pages/Community'
 import Blogs from './pages/Blogs'
 import PackageDetails from './pages/PackageDetails'
+import CategoryPackages from './pages/CategoryPackages'
 import Contact from './pages/Contact'
 import Inquiry from './pages/Inquiry'
 import Login from './pages/Login'
@@ -56,6 +58,8 @@ function AppRoutes() {
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
         <Route path="/destinations" element={<Destinations />} />
+        <Route path="/destination/:slug" element={<DestinationPackages />} />
+        <Route path="/category/:slug" element={<CategoryPackages />} />
         <Route path="/domestic" element={<Domestic />} />
         <Route path="/group-trips" element={<GroupTrips />} />
         <Route path="/international" element={<International />} />
@@ -67,9 +71,9 @@ function AppRoutes() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/inquiry" element={<Inquiry />} />
         <Route path="/admin-login" element={<Login />} />
-           <Route path="dashboard" element={<Dashboard />} />
+        <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
         <Route
-          path="/admin/dashboard"
+          path="/admin/:section"
           element={(
             <ProtectedRoute>
               <Dashboard />

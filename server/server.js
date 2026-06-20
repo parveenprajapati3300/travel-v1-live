@@ -6,6 +6,9 @@ import authRoutes from './routes/authRoutes.js'
 import contactRoutes from './routes/contactRoutes.js'
 import inquiryRoutes from './routes/inquiryRoutes.js'
 import packageRoutes from './routes/packageRoutes.js'
+import destinationRoutes from './routes/destinationRoutes.js'
+import categoryRoutes from './routes/categoryRoutes.js'
+import searchRoutes from './routes/searchRoutes.js'
 import seedDefaultAdmin from './utils/seedDefaultAdmin.js'
 
 dotenv.config({ path: './server/.env' })
@@ -24,6 +27,9 @@ app.get('/api/health', (req, res) => {
 
 app.use('/api/auth', authRoutes)
 app.use('/api/packages', packageRoutes)
+app.use('/api/destinations', destinationRoutes)
+app.use('/api/categories', categoryRoutes)
+app.use('/api/search', searchRoutes)
 app.use('/api/contact', contactRoutes)
 app.use('/api/inquiry', inquiryRoutes)
 
@@ -31,7 +37,7 @@ app.use((req, res) => {
   res.status(404).json({ message: 'API route not found' })
 })
 
-app.use((error, req, res, next) => {
+app.use((error, req, res, _next) => {
   const statusCode = res.statusCode === 200 ? 500 : res.statusCode
   res.status(statusCode).json({
     message: error.message || 'Server error',

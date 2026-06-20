@@ -86,7 +86,7 @@ function AppNavbar() {
                 <FaPhone />
                 <span>
                   <small>Call Us</small>
-                  +91 9999999999
+                  +91 9898987999
                 </span>
               </a>
               {/* <Nav.Link as={NavLink} to="/destinations" className="nav-icon-action" aria-label="Search tours">

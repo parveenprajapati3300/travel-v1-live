@@ -2,24 +2,6 @@ import { useMemo, useState } from 'react'
 import { Alert, Button, Col, Form, Modal, Row, Table } from 'react-bootstrap'
 import { FaArrowLeft, FaCloudArrowUp, FaImages, FaPen, FaPlus, FaTrash } from 'react-icons/fa6'
 
-const destinationOptions = [
-  'Kashmir',
-  'Leh Ladakh',
-  'Spiti Valley',
-  'Kerala',
-  'Meghalaya',
-  'Rajasthan',
-  'Thailand',
-  'Vietnam',
-  'Japan',
-  'Sri Lanka',
-  'Bali',
-  'Dubai',
-  'Switzerland',
-]
-
-const categoryOptions = ['Adventure', 'Luxury', 'Backpacking', 'Family', 'Honeymoon', 'Weekend', 'Group Trip']
-
 const durationOptions = [
   { label: '1 Day / 1 Night', days: 1 },
   { label: '2 Days / 1 Night', days: 2 },
@@ -65,7 +47,7 @@ const listToText = (value) => (Array.isArray(value) ? value.join(', ') : value |
 
 const durationToDays = (duration) => durationOptions.find((item) => item.label === duration)?.days || 1
 
-function PackageManager({ packages, onCreate, onUpdate, onDelete }) {
+function PackageManager({ packages, destinations = [], categories = [], onCreate, onUpdate, onDelete }) {
   const [mode, setMode] = useState('list')
   const [form, setForm] = useState(initialForm)
   const [editingId, setEditingId] = useState('')
@@ -78,6 +60,19 @@ function PackageManager({ packages, onCreate, onUpdate, onDelete }) {
 
   const selectedDays = useMemo(() => durationToDays(form.duration), [form.duration])
   const galleryImages = useMemo(() => listToText(form.gallery).split(',').map((item) => item.trim()).filter(Boolean), [form.gallery])
+  const destinationOptions = useMemo(() => {
+    const activeNames = destinations
+      .filter((item) => item.isActive !== false)
+      .map((item) => item.name)
+    return form.packageDestination && !activeNames.includes(form.packageDestination)
+      ? [...activeNames, form.packageDestination]
+      : activeNames
+  }, [destinations, form.packageDestination])
+  const categoryOptions = useMemo(() => {
+    const activeNames = categories.filter((item) => item.isActive !== false).map((item) => item.name)
+    const selectedNames = form.packageCategories.filter((item) => !activeNames.includes(item))
+    return [...activeNames, ...selectedNames]
+  }, [categories, form.packageCategories])
 
   const updateField = (event) => {
     const { name, value } = event.target
@@ -330,6 +325,7 @@ function PackageManager({ packages, onCreate, onUpdate, onDelete }) {
                   <option value="">Select destination</option>
                   {destinationOptions.map((item) => <option key={item} value={item}>{item}</option>)}
                 </Form.Select>
+                {!destinationOptions.length && <div className="admin-field-hint">Create an active destination first.</div>}
                 <Form.Control.Feedback type="invalid">{fieldErrors.packageDestination}</Form.Control.Feedback>
               </Col>
               <Col md={4}>
@@ -394,6 +390,7 @@ function PackageManager({ packages, onCreate, onUpdate, onDelete }) {
                     </label>
                   ))}
                 </div>
+                {!categoryOptions.length && <div className="admin-field-hint">Create an active category first.</div>}
                 {fieldErrors.packageCategories && <div className="admin-field-error">{fieldErrors.packageCategories}</div>}
               </Col>
               <Col xs={12} data-package-field="description">
