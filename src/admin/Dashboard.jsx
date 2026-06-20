@@ -21,7 +21,6 @@ import {
   getAdminPackages,
   getContacts,
   getInquiries,
-  markInquiryContacted,
   updatePackage,
 } from '../services/api'
 
@@ -43,15 +42,13 @@ function Dashboard() {
   const [notice, setNotice] = useState('')
 
   const stats = useMemo(() => {
-    const contacted = inquiries.filter((item) => item.status === 'Contacted').length
     return {
       inquiries: inquiries.length,
       contacts: contacts.length,
       packages: packages.length,
-      contacted,
-      pending: inquiries.length - contacted,
+      pending: inquiries.length,
     }
-  }, [contacts.length, inquiries, packages.length])
+  }, [contacts.length, inquiries.length, packages.length])
 
   const loadDashboard = useCallback(async () => {
     setError('')
@@ -88,12 +85,6 @@ function Dashboard() {
     await deleteInquiry(id)
     setInquiries((current) => current.filter((item) => item._id !== id))
     setNotice('Inquiry deleted successfully.')
-  }
-
-  const handleMarkContacted = async (id) => {
-    const { data } = await markInquiryContacted(id)
-    setInquiries((current) => current.map((item) => (item._id === id ? data.inquiry : item)))
-    setNotice('Inquiry marked as contacted.')
   }
 
   const handleDeleteContact = async (id) => {
@@ -138,11 +129,10 @@ function Dashboard() {
           <div className="admin-view-header">
             <div>
               <span className="eyebrow">Inquiries</span>
-              <h2>Tour Inquiry List</h2>
-              <p>View, mark contacted, and delete customer trip inquiries.</p>
+              <h2>Tour Inquiries</h2>
             </div>
           </div>
-          <InquiryTable inquiries={inquiries} onDelete={handleDeleteInquiry} onMarkContacted={handleMarkContacted} />
+          <InquiryTable inquiries={inquiries} onDelete={handleDeleteInquiry} />
         </div>
       )
     }
@@ -153,8 +143,7 @@ function Dashboard() {
           <div className="admin-view-header">
             <div>
               <span className="eyebrow">Contacts</span>
-              <h2>Contact Message List</h2>
-              <p>Read website contact messages and remove completed records.</p>
+              <h2>Contact Messages</h2>
             </div>
           </div>
           <ContactTable contacts={contacts} onDelete={handleDeleteContact} />
@@ -176,11 +165,6 @@ function Dashboard() {
             </button>
           </Col>
           <Col sm={6} xl={3}>
-            <button className="admin-stat-card admin-stat-button" onClick={() => setActiveView('inquiries')}>
-              <FaUserShield /><span>Contacted</span><strong>{stats.contacted}</strong>
-            </button>
-          </Col>
-          <Col sm={6} xl={3}>
             <button className="admin-stat-card admin-stat-button" onClick={() => setActiveView('packages')}>
               <FaSuitcaseRolling /><span>Packages</span><strong>{stats.packages}</strong>
             </button>
@@ -194,7 +178,7 @@ function Dashboard() {
 
         <Row className="g-4">
           <Col lg={12}>
-            <InquiryTable inquiries={inquiries.slice(0, 5)} onDelete={handleDeleteInquiry} onMarkContacted={handleMarkContacted} />
+            <InquiryTable inquiries={inquiries.slice(0, 5)} onDelete={handleDeleteInquiry} />
           </Col>
           <Col lg={12}>
             <ContactTable contacts={contacts.slice(0, 5)} onDelete={handleDeleteContact} />
@@ -209,7 +193,7 @@ function Dashboard() {
   return (
     <section className="admin-layout">
       <aside className="admin-sidebar">
-        <div className="admin-logo"><FaUserShield /> TravelSphere Admin</div>
+        <div className="admin-logo"><FaUserShield /> TNT Admin</div>
         <div className="admin-nav">
           {navItems.map((item) => (
             <button

@@ -2,6 +2,7 @@ import { Col, Container, Row } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
 import { FaFacebookF, FaInstagram, FaLinkedinIn, FaLocationDot, FaPhone, FaYoutube } from 'react-icons/fa6'
 import { MdEmail } from 'react-icons/md'
+import tntLogo from '../assets/tnt-logo.jpeg'
 
 function Footer() {
   return (
@@ -9,8 +10,8 @@ function Footer() {
       <Container>
         <Row className="g-4">
           <Col lg={4}>
-            <h3>TravelSphere</h3>
-            <p>Modern travel marketplace for group trips, customized packages, community meetups, and expert consultations.</p>
+            <img className="footer-logo" src={tntLogo} alt="TNT Tour and Travels" />
+            <p>Custom holiday packages, group trips, family tours, and expert travel support from New Delhi.</p>
             <div className="social-links">
               <a href="https://instagram.com" aria-label="Instagram"><FaInstagram /></a>
               <a href="https://facebook.com" aria-label="Facebook"><FaFacebookF /></a>
@@ -23,7 +24,7 @@ function Footer() {
             <Link to="/about">About</Link>
             <Link to="/domestic">Destinations</Link>
             <Link to="/international">International Trips</Link>
-            <Link to="/inquiry">Careers</Link>
+            <Link to="/inquiry">Plan My Trip</Link>
             <Link to="/contact">Terms</Link>
             <Link to="/contact">Privacy</Link>
           </Col>
@@ -37,14 +38,14 @@ function Footer() {
           </Col>
           <Col md={4} lg={3}>
             <h4>Contact</h4>
-            <span><FaLocationDot /> Mumbai, Delhi, Bengaluru</span>
+            <span><FaLocationDot /> 705, Somdutt Chamber, New Delhi- 110066</span>
             <span><FaPhone /> +91 98765 43210</span>
-            <span><MdEmail /> hello@travelsphere.in</span>
+            <span><MdEmail /> hello@tnttourandtravels.in</span>
           </Col>
         </Row>
         <div className="footer-bottom">
-          <span>Copyright 2026 TravelSphere. All rights reserved.</span>
-          <span>Built for travel marketplace and community experiences.</span>
+          <span>Copyright 2026 TNT Tour and Travels. All rights reserved.</span>
+          <span>Explore. Travel. Thrive.</span>
         </div>
       </Container>
     </footer>

@@ -8,7 +8,7 @@ function About() {
       <Container>
         <Row className="g-5 align-items-center">
           <Col lg={6} data-aos="fade-right">
-            <span className="eyebrow">About TripNest</span>
+            <span className="eyebrow">About TNT Tour and Travels</span>
             <h1 className="page-title">A modern travel agency for holidays that feel effortless.</h1>
             <p className="lead-text">We design tour packages with the care of a boutique planner and the operational discipline of a serious travel company. Every route, hotel, transfer, and experience is chosen to keep your holiday smooth, stylish, and memorable.</p>
           </Col>

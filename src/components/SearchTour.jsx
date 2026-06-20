@@ -3,7 +3,7 @@ import { Button, Form } from 'react-bootstrap'
 import { useNavigate } from 'react-router-dom'
 import { FaMagnifyingGlass } from 'react-icons/fa6'
 
-function SearchTour() {
+function SearchTour({ placeholder = 'Enter Your Dream Destination!' }) {
   const navigate = useNavigate()
   const [query, setQuery] = useState('')
 
@@ -19,7 +19,7 @@ function SearchTour() {
       <Form.Control
         value={query}
         onChange={(event) => setQuery(event.target.value)}
-        placeholder="Enter Your Dream Destination!"
+        placeholder={placeholder}
         aria-label="Search destination or package"
       />
       <Button type="submit">Search</Button>

@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import { Container, Nav, Navbar } from 'react-bootstrap'
 import { NavLink, useLocation } from 'react-router-dom'
-import { FaChevronDown, FaChevronUp, FaPlaneDeparture } from 'react-icons/fa6'
+import { FaChevronDown, FaChevronUp, FaMagnifyingGlass, FaPhone, FaRegUser } from 'react-icons/fa6'
+import tntLogo from '../assets/tnt-logo.jpeg'
 
 const navItems = [
   { label: 'Home', to: '/' },
@@ -40,8 +41,7 @@ function AppNavbar() {
     <Navbar expand="lg" fixed="top" className={`site-nav ${isHomeTop ? 'is-home-top' : 'is-scrolled'}`}>
       <Container fluid="xl">
         <Navbar.Brand as={NavLink} to="/" className="brand-mark">
-          <span><FaPlaneDeparture /></span>
-          TravelSphere
+          <img src={tntLogo} alt="TNT Tour and Travels" />
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="main-navigation" />
         <Navbar.Collapse id="main-navigation">
@@ -80,6 +80,21 @@ function AppNavbar() {
                   </Nav.Link>
                 ))}
               </div>
+            </div>
+            <div className="nav-actions">
+              <a className="nav-call" href="tel:+919797972175" aria-label="Call TNT Tour and Travels">
+                <FaPhone />
+                <span>
+                  <small>Call Us</small>
+                  +91 9999999999
+                </span>
+              </a>
+              {/* <Nav.Link as={NavLink} to="/destinations" className="nav-icon-action" aria-label="Search tours">
+                <FaMagnifyingGlass />
+              </Nav.Link> */}
+              <Nav.Link as={NavLink}  className="nav-icon-action" aria-label="Profile">
+                <FaRegUser />
+              </Nav.Link>
             </div>
           </Nav>
         </Navbar.Collapse>

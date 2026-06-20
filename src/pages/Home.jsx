@@ -1,15 +1,12 @@
 import { useEffect, useState } from 'react'
-import { Button, Col, Container, Form, Row } from 'react-bootstrap'
+import { Button, Col, Container, Row } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
 import {
   FaCalendarDays,
-  FaCameraRetro,
   FaArrowRight,
   FaHeadset,
   FaPeopleGroup,
   FaShieldHeart,
-  FaStar,
-  FaSuitcaseRolling,
   FaTruckPlane,
   FaUsers,
   FaWandMagicSparkles,
@@ -18,8 +15,6 @@ import HeroCarousel from '../components/HeroCarousel'
 import PackageCard from '../components/PackageCard'
 import SectionHeading from '../components/SectionHeading'
 import Testimonial from '../components/Testimonial'
-import Gallery from '../components/Gallery'
-import InquiryForm from '../components/InquiryForm'
 import { domesticPackages, internationalPackages } from '../data/packages'
 import { getPackages } from '../services/api'
 
@@ -229,49 +224,6 @@ function Home() {
         </Container>
       </section>
 
-      <section className="section soft-bg" id="gallery">
-        <Container>
-          <SectionHeading eyebrow="Instagram Gallery" title="Adventure Shots, Trekking Photos, And Trip Moments" />
-          <Gallery />
-        </Container>
-      </section>
-
-      <section className="section lead-section">
-        <Container>
-          <Row className="g-4 align-items-center">
-            <Col lg={5}>
-              <SectionHeading center={false} eyebrow="Free Consultation" title="Request A Callback For Your Trip" text="Share your name, email, phone, destination, and travel date. Our expert will help you compare group trips and custom packages." />
-              <div className="lead-icons">
-                <span><FaCameraRetro /> Destination ideas</span>
-                <span><FaSuitcaseRolling /> Package guidance</span>
-                <span><FaStar /> Review-backed picks</span>
-              </div>
-            </Col>
-            <Col lg={7}>
-              <div className="form-shell glass-card">
-                <InquiryForm />
-              </div>
-            </Col>
-          </Row>
-        </Container>
-      </section>
-
-      <section className="newsletter-section">
-        <Container>
-          <Row className="align-items-center g-4">
-            <Col lg={7}>
-              <span className="eyebrow">Travel Notes</span>
-              <h2>Get trip drops, group departure alerts, and community event updates.</h2>
-            </Col>
-            <Col lg={5}>
-              <div className="newsletter-form">
-                <Form.Control type="email" placeholder="Enter your email" aria-label="Email address" />
-                <Button className="btn-gradient">Subscribe</Button>
-              </div>
-            </Col>
-          </Row>
-        </Container>
-      </section>
     </>
   )
 }

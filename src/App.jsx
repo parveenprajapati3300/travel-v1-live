@@ -7,6 +7,7 @@ import 'aos/dist/aos.css'
 import './index.css'
 import AppNavbar from './components/Navbar'
 import Footer from './components/Footer'
+import FloatingActions from './components/FloatingActions'
 import ScrollToTop from './components/ScrollToTop'
 import LoadingSpinner from './components/LoadingSpinner'
 import Home from './pages/Home'
@@ -89,6 +90,7 @@ function AppContent() {
       {!isAdminArea && <AppNavbar />}
       <AppRoutes />
       {!isAdminArea && <Footer />}
+      {!isAdminArea && <FloatingActions />}
       <ScrollToTop />
     </>
   )

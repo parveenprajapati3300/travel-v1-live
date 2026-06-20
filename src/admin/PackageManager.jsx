@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
-import { Alert, Button, Col, Form, Row, Table } from 'react-bootstrap'
-import { FaArrowLeft, FaPen, FaPlus, FaTrash } from 'react-icons/fa6'
+import { Alert, Button, Col, Form, Modal, Row, Table } from 'react-bootstrap'
+import { FaArrowLeft, FaCloudArrowUp, FaImages, FaPen, FaPlus, FaTrash } from 'react-icons/fa6'
 
 const destinationOptions = [
   'Kashmir',
@@ -21,6 +21,9 @@ const destinationOptions = [
 const categoryOptions = ['Adventure', 'Luxury', 'Backpacking', 'Family', 'Honeymoon', 'Weekend', 'Group Trip']
 
 const durationOptions = [
+  { label: '1 Day / 1 Night', days: 1 },
+  { label: '2 Days / 1 Night', days: 2 },
+  { label: '2 Days / 2 Nights', days: 2 },
   { label: '3 Days / 2 Nights', days: 3 },
   { label: '5 Days / 4 Nights', days: 5 },
   { label: '6 Days / 5 Nights', days: 6 },
@@ -42,7 +45,7 @@ const initialForm = {
   packageCategories: [],
   title: '',
   image: '',
-  duration: '5 Days / 4 Nights',
+  duration: '2 Days / 2 Nights',
   price: '',
   location: '',
   rating: '4.8',
@@ -50,7 +53,7 @@ const initialForm = {
   highlights: '',
   included: '',
   excluded: '',
-  itinerary: createItinerary(5),
+  itinerary: createItinerary(2),
   hotel: '',
   transport: '',
   gallery: '',
@@ -67,11 +70,18 @@ function PackageManager({ packages, onCreate, onUpdate, onDelete }) {
   const [form, setForm] = useState(initialForm)
   const [editingId, setEditingId] = useState('')
   const [error, setError] = useState('')
+  const [fieldErrors, setFieldErrors] = useState({})
+  const [uploadingImage, setUploadingImage] = useState(false)
+  const [uploadingGallery, setUploadingGallery] = useState(false)
+  const [replacingGalleryIndex, setReplacingGalleryIndex] = useState(null)
+  const [previewImage, setPreviewImage] = useState('')
 
   const selectedDays = useMemo(() => durationToDays(form.duration), [form.duration])
+  const galleryImages = useMemo(() => listToText(form.gallery).split(',').map((item) => item.trim()).filter(Boolean), [form.gallery])
 
   const updateField = (event) => {
     const { name, value } = event.target
+    setFieldErrors((current) => ({ ...current, [name]: '' }))
     setForm((current) => {
       if (name === 'duration') {
         return { ...current, duration: value, itinerary: createItinerary(durationToDays(value), current.itinerary) }
@@ -84,6 +94,7 @@ function PackageManager({ packages, onCreate, onUpdate, onDelete }) {
   }
 
   const togglePackageCategory = (value) => {
+    setFieldErrors((current) => ({ ...current, packageCategories: '' }))
     setForm((current) => {
       const exists = current.packageCategories.includes(value)
       return {
@@ -102,10 +113,112 @@ function PackageManager({ packages, onCreate, onUpdate, onDelete }) {
     }))
   }
 
+  const uploadToCloudinary = async (file) => {
+    const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME
+    const uploadPreset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET
+
+    if (!cloudName || !uploadPreset) {
+      throw new Error('Cloudinary upload setup missing. Add VITE_CLOUDINARY_CLOUD_NAME and VITE_CLOUDINARY_UPLOAD_PRESET in your frontend .env file.')
+    }
+
+    const formData = new FormData()
+    formData.append('file', file)
+    formData.append('upload_preset', uploadPreset)
+    if (import.meta.env.VITE_CLOUDINARY_FOLDER) {
+      formData.append('folder', import.meta.env.VITE_CLOUDINARY_FOLDER)
+    }
+
+    try {
+      const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+        method: 'POST',
+        body: formData,
+      })
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error?.message || 'Cloudinary upload failed.')
+      }
+
+      return data.secure_url
+    } catch (uploadError) {
+      throw new Error(uploadError.message || 'Unable to upload image. Please try again.', { cause: uploadError })
+    }
+  }
+
+  const setGalleryImages = (images) => {
+    setForm((current) => ({ ...current, gallery: images.join(', ') }))
+  }
+
+  const scrollToField = (name) => {
+    const node = document.querySelector(`[data-package-field="${name}"]`)
+    if (!node) return
+    node.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    setTimeout(() => {
+      node.querySelector('input, textarea, select, button')?.focus()
+    }, 250)
+  }
+
+  const uploadCoverImage = async (event) => {
+    const file = event.target.files?.[0]
+    event.target.value = ''
+    if (!file) return
+
+    try {
+      setError('')
+      setUploadingImage(true)
+      const imageUrl = await uploadToCloudinary(file)
+      setForm((current) => ({ ...current, image: imageUrl }))
+    } catch (uploadError) {
+      setError(uploadError.message)
+    } finally {
+      setUploadingImage(false)
+    }
+  }
+
+  const uploadGalleryImages = async (event) => {
+    const files = Array.from(event.target.files || [])
+    event.target.value = ''
+    if (!files.length) return
+
+    try {
+      setError('')
+      setUploadingGallery(true)
+      const uploadedUrls = await Promise.all(files.map((file) => uploadToCloudinary(file)))
+      setGalleryImages([...galleryImages, ...uploadedUrls])
+    } catch (uploadError) {
+      setError(uploadError.message)
+    } finally {
+      setUploadingGallery(false)
+    }
+  }
+
+  const replaceGalleryImage = async (index, event) => {
+    const file = event.target.files?.[0]
+    event.target.value = ''
+    if (!file) return
+
+    try {
+      setError('')
+      setReplacingGalleryIndex(index)
+      const imageUrl = await uploadToCloudinary(file)
+      const nextImages = galleryImages.map((item, itemIndex) => (itemIndex === index ? imageUrl : item))
+      setGalleryImages(nextImages)
+    } catch (uploadError) {
+      setError(uploadError.message)
+    } finally {
+      setReplacingGalleryIndex(null)
+    }
+  }
+
+  const removeGalleryImage = (index) => {
+    setGalleryImages(galleryImages.filter((_, itemIndex) => itemIndex !== index))
+  }
+
   const openCreate = () => {
     setForm(initialForm)
     setEditingId('')
     setError('')
+    setFieldErrors({})
     setMode('form')
   }
 
@@ -113,6 +226,8 @@ function PackageManager({ packages, onCreate, onUpdate, onDelete }) {
     setForm(initialForm)
     setEditingId('')
     setError('')
+    setFieldErrors({})
+    setPreviewImage('')
     setMode('list')
   }
 
@@ -141,20 +256,28 @@ function PackageManager({ packages, onCreate, onUpdate, onDelete }) {
       isActive: item.isActive ?? true,
     })
     setError('')
+    setFieldErrors({})
     setMode('form')
   }
 
   const submitPackage = async (event) => {
     event.preventDefault()
     setError('')
+    setFieldErrors({})
 
-    if (!form.title.trim() || !form.image.trim() || !form.price || !form.packageDestination || !form.location.trim() || !form.description.trim()) {
-      setError('Package title, destination, image, price, route/location, and description are required.')
-      return
-    }
+    const nextFieldErrors = {}
+    if (!form.packageDestination) nextFieldErrors.packageDestination = 'Package destination is required.'
+    if (!form.title.trim()) nextFieldErrors.title = 'Package title is required.'
+    if (!form.price) nextFieldErrors.price = 'Package price is required.'
+    if (!form.image.trim()) nextFieldErrors.image = 'Cover image is required.'
+    if (!form.location.trim()) nextFieldErrors.location = 'Route / location is required.'
+    if (!form.packageCategories.length) nextFieldErrors.packageCategories = 'Select at least one package category.'
+    if (!form.description.trim()) nextFieldErrors.description = 'Description is required.'
 
-    if (!form.packageCategories.length) {
-      setError('Select at least one package category.')
+    if (Object.keys(nextFieldErrors).length) {
+      setFieldErrors(nextFieldErrors)
+      setError('Please complete the highlighted package fields.')
+      scrollToField(Object.keys(nextFieldErrors)[0])
       return
     }
 
@@ -201,12 +324,13 @@ function PackageManager({ packages, onCreate, onUpdate, onDelete }) {
                   <option value="international">International</option>
                 </Form.Select>
               </Col>
-              <Col md={4}>
+              <Col md={4} data-package-field="packageDestination">
                 <Form.Label>Package Destination</Form.Label>
-                <Form.Select name="packageDestination" value={form.packageDestination} onChange={updateField}>
+                <Form.Select name="packageDestination" value={form.packageDestination} onChange={updateField} isInvalid={!!fieldErrors.packageDestination}>
                   <option value="">Select destination</option>
                   {destinationOptions.map((item) => <option key={item} value={item}>{item}</option>)}
                 </Form.Select>
+                <Form.Control.Feedback type="invalid">{fieldErrors.packageDestination}</Form.Control.Feedback>
               </Col>
               <Col md={4}>
                 <Form.Label>Package Duration</Form.Label>
@@ -221,29 +345,44 @@ function PackageManager({ packages, onCreate, onUpdate, onDelete }) {
                   <option value="inactive">Inactive</option>
                 </Form.Select>
               </Col>
-              <Col md={8}>
+              <Col md={8} data-package-field="title">
                 <Form.Label>Package Title</Form.Label>
-                <Form.Control name="title" value={form.title} onChange={updateField} placeholder="Example: Kashmir Luxe Escape" />
+                <Form.Control name="title" value={form.title} onChange={updateField} placeholder="Example: Kashmir Luxe Escape" isInvalid={!!fieldErrors.title} />
+                <Form.Control.Feedback type="invalid">{fieldErrors.title}</Form.Control.Feedback>
               </Col>
-              <Col md={4}>
+              <Col md={4} data-package-field="price">
                 <Form.Label>Package Price</Form.Label>
-                <Form.Control type="number" name="price" value={form.price} onChange={updateField} placeholder="42999" />
+                <Form.Control type="number" name="price" value={form.price} onChange={updateField} placeholder="42999" isInvalid={!!fieldErrors.price} />
+                <Form.Control.Feedback type="invalid">{fieldErrors.price}</Form.Control.Feedback>
               </Col>
-              <Col md={8}>
+              <Col md={8} data-package-field="image">
                 <Form.Label>Cover Image URL</Form.Label>
-                <Form.Control name="image" value={form.image} onChange={updateField} placeholder="https://..." />
+                <div className="admin-upload-control">
+                  <Form.Control name="image" value={form.image} onChange={updateField} placeholder="https://..." isInvalid={!!fieldErrors.image} />
+                  <Button as="label" variant="outline-dark" className="admin-upload-button">
+                    <FaCloudArrowUp /> {uploadingImage ? 'Uploading...' : 'Upload'}
+                    <input accept="image/*" disabled={uploadingImage} hidden type="file" onChange={uploadCoverImage} />
+                  </Button>
+                </div>
+                {fieldErrors.image && <div className="admin-field-error">{fieldErrors.image}</div>}
+                {form.image && (
+                  <button className="admin-image-preview" type="button" onClick={() => setPreviewImage(form.image)}>
+                    <img src={form.image} alt="Package cover preview" />
+                  </button>
+                )}
               </Col>
               <Col md={4}>
                 <Form.Label>Rating</Form.Label>
                 <Form.Control type="number" step="0.1" max="5" name="rating" value={form.rating} onChange={updateField} />
               </Col>
-              <Col xs={12}>
+              <Col xs={12} data-package-field="location">
                 <Form.Label>Route / Location</Form.Label>
-                <Form.Control name="location" value={form.location} onChange={updateField} placeholder="Srinagar, Gulmarg, Pahalgam" />
+                <Form.Control name="location" value={form.location} onChange={updateField} placeholder="Srinagar, Gulmarg, Pahalgam" isInvalid={!!fieldErrors.location} />
+                <Form.Control.Feedback type="invalid">{fieldErrors.location}</Form.Control.Feedback>
               </Col>
-              <Col xs={12}>
+              <Col xs={12} data-package-field="packageCategories">
                 <Form.Label>Package Category</Form.Label>
-                <div className="admin-check-grid">
+                <div className={`admin-check-grid ${fieldErrors.packageCategories ? 'is-invalid' : ''}`}>
                   {categoryOptions.map((item) => (
                     <label key={item}>
                       <input
@@ -255,10 +394,12 @@ function PackageManager({ packages, onCreate, onUpdate, onDelete }) {
                     </label>
                   ))}
                 </div>
+                {fieldErrors.packageCategories && <div className="admin-field-error">{fieldErrors.packageCategories}</div>}
               </Col>
-              <Col xs={12}>
+              <Col xs={12} data-package-field="description">
                 <Form.Label>Description</Form.Label>
-                <Form.Control as="textarea" rows={3} name="description" value={form.description} onChange={updateField} />
+                <Form.Control as="textarea" rows={3} name="description" value={form.description} onChange={updateField} isInvalid={!!fieldErrors.description} />
+                <Form.Control.Feedback type="invalid">{fieldErrors.description}</Form.Control.Feedback>
               </Col>
             </Row>
           </div>
@@ -294,6 +435,36 @@ function PackageManager({ packages, onCreate, onUpdate, onDelete }) {
               <Col md={6}>
                 <Form.Label>Gallery URLs</Form.Label>
                 <Form.Control as="textarea" rows={2} name="gallery" value={form.gallery} onChange={updateField} placeholder="Comma separated image URLs" />
+                <div className="admin-gallery-toolbar">
+                  <Button as="label" variant="outline-dark" className="admin-upload-button">
+                    <FaImages /> {uploadingGallery ? 'Uploading...' : 'Upload Gallery Images'}
+                    <input accept="image/*" disabled={uploadingGallery} hidden multiple type="file" onChange={uploadGalleryImages} />
+                  </Button>
+                </div>
+                {galleryImages.length > 0 && (
+                  <div className="admin-gallery-editor">
+                    {galleryImages.map((imageUrl, index) => (
+                      <div className="admin-gallery-item" key={`${imageUrl}-${index}`}>
+                        <button type="button" onClick={() => setPreviewImage(imageUrl)}>
+                          <img src={imageUrl} alt={`Gallery preview ${index + 1}`} />
+                        </button>
+                        <div className="admin-gallery-actions">
+                          <Button as="label" size="sm" variant="outline-dark">
+                            {replacingGalleryIndex === index ? 'Uploading...' : 'Change'}
+                            <input
+                              accept="image/*"
+                              disabled={replacingGalleryIndex === index}
+                              hidden
+                              type="file"
+                              onChange={(event) => replaceGalleryImage(index, event)}
+                            />
+                          </Button>
+                          <Button size="sm" variant="outline-danger" onClick={() => removeGalleryImage(index)}><FaTrash /></Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </Col>
               <Col md={6}>
                 <Form.Label>Hotel</Form.Label>
@@ -315,6 +486,15 @@ function PackageManager({ packages, onCreate, onUpdate, onDelete }) {
             <Button type="submit" className="btn-gradient"><FaPlus /> {editingId ? 'Update Package' : 'Create Package'}</Button>
           </div>
         </Form>
+
+        <Modal show={Boolean(previewImage)} onHide={() => setPreviewImage('')} centered size="xl" className="admin-image-modal">
+          <Modal.Header closeButton>
+            <Modal.Title>Cover Image Preview</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <img src={previewImage} alt="Full package cover preview" />
+          </Modal.Body>
+        </Modal>
       </div>
     )
   }

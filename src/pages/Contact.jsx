@@ -63,10 +63,10 @@ function Contact() {
         <Row className="g-4">
           <Col lg={5}>
             <div className="contact-panel glass-card" data-aos="fade-right">
-              <h3>TripNest Holidays</h3>
-              <p><FaLocationDot /> 12th Floor, Travel House, Mumbai, India</p>
+              <h3>TNT Tour and Travels</h3>
+              <p><FaLocationDot /> 705, Somdutt Chamber, New Delhi- 110066</p>
               <p><FaPhone /> +91 98765 43210</p>
-              <p><MdEmail /> hello@tripnest.in</p>
+              <p><MdEmail /> hello@tnttourandtravels.in</p>
               <p><FaRegClock /> Mon to Sat, 10:00 AM - 7:00 PM</p>
             </div>
           </Col>

@@ -41,12 +41,12 @@ function Login() {
               <div className="login-icon"><FaPlaneDeparture /></div>
               <span className="eyebrow">Admin Login</span>
               <h1>Welcome back</h1>
-              <p>Manage tour inquiries, contact messages, and customer follow-ups.</p>
+              <p>Manage tour inquiries, packages, and customer follow-ups.</p>
               {error && <Alert variant="danger">{error}</Alert>}
               <Form className="inquiry-form" onSubmit={handleSubmit}>
                 <Form.Group className="mb-3">
                   <Form.Label>Email</Form.Label>
-                  <Form.Control type="email" name="email" value={form.email} onChange={updateField} placeholder="admin@tripnest.in" required />
+                  <Form.Control type="email" name="email" value={form.email} onChange={updateField} placeholder="admin@tnttourandtravels.in" required />
                 </Form.Group>
                 <Form.Group className="mb-3">
                   <Form.Label>Password</Form.Label>
