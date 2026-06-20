@@ -1,9 +1,11 @@
 import { Badge, Button, Card } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
 import { FaArrowRight, FaClock, FaLocationDot, FaStar } from 'react-icons/fa6'
-import { formatPrice } from '../data/packages'
+import { formatPrice } from '../utils/format'
 
 function PackageCard({ item }) {
+  const destinationLabel = item.packageDestination || item.location?.split(',')[0] || 'Destination'
+
   return (
     <Card className="package-card h-100" data-aos="fade-up">
       <div className="card-image-wrap">
@@ -13,7 +15,7 @@ function PackageCard({ item }) {
       </div>
       <Card.Body>
         <div className="package-topline">
-          <span><FaLocationDot /> {item.location.split(',')[0]}</span>
+          <span><FaLocationDot /> {destinationLabel}</span>
           <span>{item.duration}</span>
         </div>
         <Card.Title>{item.title}</Card.Title>

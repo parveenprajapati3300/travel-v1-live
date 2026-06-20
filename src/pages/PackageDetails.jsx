@@ -6,8 +6,8 @@ import Gallery from '../components/Gallery'
 import InquiryForm from '../components/InquiryForm'
 import PackageCard from '../components/PackageCard'
 import SectionHeading from '../components/SectionHeading'
-import { formatPrice, packages } from '../data/packages'
 import { getPackage, getPackages } from '../services/api'
+import { formatPrice } from '../utils/format'
 
 const faqs = [
   ['Can I customize this trip?', 'Yes. Dates, hotel category, route pacing, activities, and group size can be adjusted after consultation.'],
@@ -17,9 +17,8 @@ const faqs = [
 
 function PackageDetails() {
   const { id } = useParams()
-  const fallbackItem = packages.find((packageItem) => packageItem.id === id)
-  const [packageData, setPackageData] = useState(null)
-  const item = packageData?.id === id ? packageData : fallbackItem
+  const [packageData, setPackageData] = useState(undefined)
+  const item = packageData?.id === id ? packageData : null
   const [relatedItems, setRelatedItems] = useState([])
   const [showInquiryModal, setShowInquiryModal] = useState(false)
   const [showStickyCta, setShowStickyCta] = useState(false)
@@ -36,7 +35,7 @@ function PackageDetails() {
 
     getPackages(item.category)
       .then(({ data }) => setRelatedItems(data.filter((packageItem) => packageItem.id !== item.id)))
-      .catch(() => setRelatedItems(packages.filter((packageItem) => packageItem.category === item.category && packageItem.id !== item.id)))
+      .catch(() => setRelatedItems([]))
   }, [item])
 
   useEffect(() => {
@@ -45,6 +44,16 @@ function PackageDetails() {
     window.addEventListener('scroll', onScroll)
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
+
+  if (packageData === undefined) {
+    return (
+      <section className="page-section text-center">
+        <Container>
+          <div className="admin-loading">Loading package details...</div>
+        </Container>
+      </section>
+    )
+  }
 
   if (!item) {
     return (
@@ -57,9 +66,7 @@ function PackageDetails() {
     )
   }
 
-  const related = relatedItems.length
-    ? relatedItems
-    : packages.filter((packageItem) => packageItem.category === item.category && packageItem.id !== item.id)
+  const related = relatedItems
   const packageCategories = item.packageCategories?.length ? item.packageCategories : [item.category]
   const itinerary = item.itinerary || []
   const included = item.included || []

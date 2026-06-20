@@ -4,7 +4,6 @@ import { Link, useParams } from 'react-router-dom'
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa6'
 import PackageCard from '../components/PackageCard'
 import SectionHeading from '../components/SectionHeading'
-import { packages } from '../data/packages'
 import { getCategories, getPackagesByCategory } from '../services/api'
 import { findBySlug } from '../utils/slug'
 
@@ -31,7 +30,7 @@ function CategoryPackages() {
     getPackagesByCategory(categoryName)
       .then(({ data }) => setPackageItems(data))
       .catch(() => {
-        setPackageItems(packages.filter((item) => item.packageCategories?.some((entry) => entry.toLowerCase() === categoryName.toLowerCase())))
+        setPackageItems([])
       })
       .finally(() => setLoading(false))
   }, [categoryName])

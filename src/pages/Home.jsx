@@ -15,80 +15,33 @@ import HeroCarousel from '../components/HeroCarousel'
 import PackageCard from '../components/PackageCard'
 import SectionHeading from '../components/SectionHeading'
 import Testimonial from '../components/Testimonial'
-import { domesticPackages, internationalPackages } from '../data/packages'
-import { getCategories, getDestinations, getPackages } from '../services/api'
+import { getCategories, getDestinations, getPackages, getPackagesByCategory } from '../services/api'
 import { slugify } from '../utils/slug'
 
-const fallbackDestinations = [
-  { name: 'Leh Ladakh', type: 'Domestic', duration: '7 Days', price: 32999, image: 'https://images.unsplash.com/photo-1581793745862-99fde7fa73d2?auto=format&fit=crop&w=900&q=80' },
-  { name: 'Spiti Valley', type: 'Domestic', duration: '8 Days', price: 28999, image: 'https://images.unsplash.com/photo-1628082305368-2e772d6c6d76?auto=format&fit=crop&w=900&q=80' },
-  { name: 'Kerala', type: 'Domestic', duration: '6 Days', price: 38999, image: 'https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=900&q=80' },
-  { name: 'Meghalaya', type: 'Domestic', duration: '5 Days', price: 24999, image: 'https://images.unsplash.com/photo-1591017403286-fd8493524e1e?auto=format&fit=crop&w=900&q=80' },
-  { name: 'Thailand', type: 'International', duration: '5 Days', price: 52999, image: 'https://images.unsplash.com/photo-1508009603885-50cf7c579365?auto=format&fit=crop&w=900&q=80' },
-  { name: 'Vietnam', type: 'International', duration: '6 Days', price: 58999, image: 'https://images.unsplash.com/photo-1528127269322-539801943592?auto=format&fit=crop&w=900&q=80' },
-  { name: 'Japan', type: 'International', duration: '7 Days', price: 149999, image: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=900&q=80' },
-  { name: 'Sri Lanka', type: 'International', duration: '5 Days', price: 44999, image: 'https://images.unsplash.com/photo-1588255580561-45f224b1f6f8?auto=format&fit=crop&w=900&q=80' },
-]
-
-const groupTrips = [
-  { destination: 'Leh Ladakh Bike Expedition', dates: '12 Jul - 18 Jul', image: fallbackDestinations[0].image },
-  { destination: 'Spiti Valley Backpacking', dates: '2 Aug - 9 Aug', image: fallbackDestinations[4].image },
-  { destination: 'Vietnam Community Trail', dates: '18 Sep - 24 Sep', image: fallbackDestinations[5].image },
-]
-
-const fallbackCategories = [
-  { name: 'Group Tour', image: fallbackDestinations[0].image },
-  { name: 'Honeymoon Tour', image: fallbackDestinations[4].image },
-  { name: 'Solo Trip', image: fallbackDestinations[1].image },
-  { name: 'Weekend Tour', image: fallbackDestinations[2].image },
-]
-
-const stories = [
-  ['Aarav Mehta', 'Leh Ladakh group trip', 'Met amazing people, route leaders were sharp, and every stay felt sorted.'],
-  ['Nisha Rao', 'Bali custom tour', 'The plan had romance, free time, and zero confusion. Exactly what we needed.'],
-  ['Kabir Sethi', 'Dubai family getaway', 'Fast callback, clear inclusions, and smooth transfers from airport to hotel.'],
-]
-
-const communityImages = [
-  {
-    name: 'Group travel friends',
-    image: 'https://images.unsplash.com/photo-1506869640319-fe1a24fd76dc?auto=format&fit=crop&w=900&q=80',
-  },
-  {
-    name: 'Mountain travel community',
-    image: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=900&q=80',
-  },
-  {
-    name: 'Beach travel meetup',
-    image: 'https://images.unsplash.com/photo-1517457373958-b7bdd4587205?auto=format&fit=crop&w=900&q=80',
-  },
-  {
-    name: 'Adventure travelers',
-    image: 'https://images.unsplash.com/photo-1527631746610-bca00a040d60?auto=format&fit=crop&w=900&q=80',
-  },
-]
-
 function Home() {
-  const [homeDomesticPackages, setHomeDomesticPackages] = useState(domesticPackages)
-  const [homeInternationalPackages, setHomeInternationalPackages] = useState(internationalPackages)
-  const [homeDestinations, setHomeDestinations] = useState(fallbackDestinations)
-  const [homeCategories, setHomeCategories] = useState(fallbackCategories)
+  const [homeDomesticPackages, setHomeDomesticPackages] = useState([])
+  const [homeInternationalPackages, setHomeInternationalPackages] = useState([])
+  const [homeDestinations, setHomeDestinations] = useState([])
+  const [homeCategories, setHomeCategories] = useState([])
+  const [groupTrips, setGroupTrips] = useState([])
   const [activeDestinationTab, setActiveDestinationTab] = useState('domestic')
   const [activePackageTab, setActivePackageTab] = useState('domestic')
 
   useEffect(() => {
-    Promise.all([getPackages('domestic'), getPackages('international'), getDestinations(), getCategories()])
-      .then(([domesticResponse, internationalResponse, destinationResponse, categoryResponse]) => {
-        setHomeDomesticPackages(domesticResponse.data.length ? domesticResponse.data : domesticPackages)
-        setHomeInternationalPackages(internationalResponse.data.length ? internationalResponse.data : internationalPackages)
-        setHomeDestinations(destinationResponse.data.length ? destinationResponse.data : fallbackDestinations)
-        setHomeCategories(categoryResponse.data.length ? categoryResponse.data : fallbackCategories)
+    Promise.all([getPackages('domestic'), getPackages('international'), getDestinations(), getCategories(), getPackagesByCategory('Group Tour')])
+      .then(([domesticResponse, internationalResponse, destinationResponse, categoryResponse, groupResponse]) => {
+        setHomeDomesticPackages(domesticResponse.data)
+        setHomeInternationalPackages(internationalResponse.data)
+        setHomeDestinations(destinationResponse.data)
+        setHomeCategories(categoryResponse.data)
+        setGroupTrips(groupResponse.data)
       })
       .catch(() => {
-        setHomeDomesticPackages(domesticPackages)
-        setHomeInternationalPackages(internationalPackages)
-        setHomeDestinations(fallbackDestinations)
-        setHomeCategories(fallbackCategories)
+        setHomeDomesticPackages([])
+        setHomeInternationalPackages([])
+        setHomeDestinations([])
+        setHomeCategories([])
+        setGroupTrips([])
       })
   }, [])
 
@@ -98,6 +51,10 @@ function Home() {
   const activeDestinations = homeDestinations
     .filter((destination) => (destination.type || 'domestic').toLowerCase() === activeDestinationTab)
     .slice(0, 4)
+  const storyItems = [...homeDomesticPackages, ...homeInternationalPackages]
+    .flatMap((item) => (item.reviews || []).map((review) => [item.title, item.packageDestination || item.location, review]))
+    .slice(0, 3)
+  const communityImages = homeDestinations.slice(0, 4)
 
   return (
     <>
@@ -146,6 +103,14 @@ function Home() {
                   </article>
                 </Col>
               ))}
+              {!activeDestinations.length && (
+                <Col xs={12}>
+                  <div className="empty-state-card">
+                    <h3>No destinations added yet</h3>
+                    <p>Create {activeDestinationTab} destinations from admin to show them here.</p>
+                  </div>
+                </Col>
+              )}
             </Row>
           </div>
         </Container>
@@ -155,6 +120,7 @@ function Home() {
         <Container>
           <div className="section-title-row">
             <SectionHeading eyebrow="Themes" title="Holidays By Theme" text="Choose a travel style and see packages created under that category." />
+            <Button as={Link} to="/categories" variant="outline-dark mb-4">View All</Button>
           </div>
           <Row className="g-4">
             {homeCategories.slice(0, 6).map((category) => (
@@ -166,6 +132,14 @@ function Home() {
                 </Link>
               </Col>
             ))}
+            {!homeCategories.length && (
+              <Col xs={12}>
+                <div className="empty-state-card">
+                  <h3>No categories added yet</h3>
+                  <p>Create categories from admin to show theme cards here.</p>
+                </div>
+              </Col>
+            )}
           </Row>
         </Container>
       </section>
@@ -189,6 +163,14 @@ function Home() {
               {activePackages.slice(0, 3).map((item) => (
                 <Col md={6} lg={4} key={item._id || item.id}><PackageCard item={item} /></Col>
               ))}
+              {!activePackages.length && (
+                <Col xs={12}>
+                  <div className="empty-state-card">
+                    <h3>No {activeViewLabel.toLowerCase()} packages added yet</h3>
+                    <p>Create packages from admin to show them here.</p>
+                  </div>
+                </Col>
+              )}
             </Row>
           </div>
         </Container>
@@ -198,18 +180,26 @@ function Home() {
         <Container>
           <SectionHeading eyebrow="Upcoming Group Trips" title="Fixed Departures With Fellow Travelers" text="Join curated group adventures with shared energy, managed stays, transport, and on-trip coordination." />
           <Row className="g-4">
-            {groupTrips.map((trip) => (
-              <Col md={4} key={trip.destination}>
+            {groupTrips.slice(0, 3).map((trip) => (
+              <Col md={4} key={trip._id || trip.id}>
                 <article className="group-trip-card" data-aos="fade-up">
-                  <img src={trip.image} alt={trip.destination} />
+                  <img src={trip.image} alt={trip.title} />
                   <div>
-                    <span><FaCalendarDays /> {trip.dates}</span>
-                    <h3>{trip.destination}</h3>
-                    <Button as={Link} to="/inquiry" className="btn-gradient">Book Now</Button>
+                    <span><FaCalendarDays /> {trip.duration}</span>
+                    <h3>{trip.title}</h3>
+                    <Button as={Link} to={`/package/${trip.id}`} className="btn-gradient">View Details</Button>
                   </div>
                 </article>
               </Col>
             ))}
+            {!groupTrips.length && (
+              <Col xs={12}>
+                <div className="empty-state-card">
+                  <h3>No group trips added yet</h3>
+                  <p>Create packages and select Group Tour category from admin.</p>
+                </div>
+              </Col>
+            )}
           </Row>
         </Container>
       </section>
@@ -246,11 +236,19 @@ function Home() {
         <Container>
           <SectionHeading eyebrow="Traveler Stories" title="Reviews And Travel Experiences" />
           <Row className="g-4">
-            {stories.map(([name, trip, text]) => (
+            {storyItems.map(([name, trip, text]) => (
               <Col md={4} key={name}>
                 <Testimonial name={name} trip={trip} text={text} />
               </Col>
             ))}
+            {!storyItems.length && (
+              <Col xs={12}>
+                <div className="empty-state-card">
+                  <h3>No traveler stories added yet</h3>
+                  <p>Add reviews while creating packages from admin to show stories here.</p>
+                </div>
+              </Col>
+            )}
           </Row>
         </Container>
       </section>
@@ -268,8 +266,14 @@ function Home() {
             <Col lg={6}>
               <div className="community-photo-grid">
                 {communityImages.map((item) => (
-                  <img key={item.name} src={item.image} alt={item.name} />
+                  <img key={item._id || item.name} src={item.image} alt={item.name} />
                 ))}
+                {!communityImages.length && (
+                  <div className="empty-state-card">
+                    <h3>No community images yet</h3>
+                    <p>Create destinations from admin to show images here.</p>
+                  </div>
+                )}
               </div>
             </Col>
           </Row>

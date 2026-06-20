@@ -4,8 +4,8 @@ import { Link, useParams } from 'react-router-dom'
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa6'
 import PackageCard from '../components/PackageCard'
 import SectionHeading from '../components/SectionHeading'
-import { formatPrice, packages } from '../data/packages'
 import { getDestinations, getPackagesByDestination } from '../services/api'
+import { formatPrice } from '../utils/format'
 import { findBySlug, slugify } from '../utils/slug'
 
 function DestinationPackages() {
@@ -37,7 +37,7 @@ function DestinationPackages() {
         setPackageItems(data)
       })
       .catch(() => {
-        setPackageItems(packages.filter((item) => slugify(item.packageDestination || item.location?.split(',')[0]) === slug))
+        setPackageItems([])
       })
       .finally(() => setLoading(false))
   }, [destinationName, slug])

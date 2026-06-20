@@ -22,6 +22,7 @@ import CustomizedTours from './pages/CustomizedTours'
 import Community from './pages/Community'
 import Blogs from './pages/Blogs'
 import PackageDetails from './pages/PackageDetails'
+import Categories from './pages/Categories'
 import CategoryPackages from './pages/CategoryPackages'
 import Contact from './pages/Contact'
 import Inquiry from './pages/Inquiry'
@@ -59,6 +60,7 @@ function AppRoutes() {
         <Route path="/about" element={<About />} />
         <Route path="/destinations" element={<Destinations />} />
         <Route path="/destination/:slug" element={<DestinationPackages />} />
+        <Route path="/categories" element={<Categories />} />
         <Route path="/category/:slug" element={<CategoryPackages />} />
         <Route path="/domestic" element={<Domestic />} />
         <Route path="/group-trips" element={<GroupTrips />} />

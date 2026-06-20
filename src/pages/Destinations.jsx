@@ -4,25 +4,25 @@ import { Link, useSearchParams } from 'react-router-dom'
 import { FaArrowRight } from 'react-icons/fa6'
 import PackageCard from '../components/PackageCard'
 import SectionHeading from '../components/SectionHeading'
-import { formatPrice, packages } from '../data/packages'
 import { getDestinations, getPackages } from '../services/api'
+import { formatPrice } from '../utils/format'
 import { slugify } from '../utils/slug'
 
 function Destinations() {
   const [searchParams] = useSearchParams()
   const selectedType = searchParams.get('type') || ''
   const searchTerm = (searchParams.get('search') || '').trim().toLowerCase()
-  const [items, setItems] = useState(packages)
+  const [items, setItems] = useState([])
   const [destinations, setDestinations] = useState([])
 
   useEffect(() => {
     Promise.all([getPackages(), getDestinations(selectedType)])
       .then(([packageResponse, destinationResponse]) => {
-        setItems(packageResponse.data.length ? packageResponse.data : packages)
+        setItems(packageResponse.data)
         setDestinations(destinationResponse.data)
       })
       .catch(() => {
-        setItems(packages)
+        setItems([])
         setDestinations([])
       })
   }, [selectedType])
@@ -72,6 +72,14 @@ function Destinations() {
         <SectionHeading eyebrow="Packages" title="All Available Packages" />
         <Row className="g-4">
           {filteredItems.map((item) => <Col md={6} lg={4} key={item._id || item.id}><PackageCard item={item} /></Col>)}
+          {!filteredItems.length && (
+            <Col xs={12}>
+              <div className="empty-state-card">
+                <h3>No packages found</h3>
+                <p>Create packages from admin to show them here.</p>
+              </div>
+            </Col>
+          )}
         </Row>
       </Container>
     </section>
