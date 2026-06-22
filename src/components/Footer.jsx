@@ -39,7 +39,7 @@ function Footer() {
           <Col md={4} lg={3}>
             <h4>Contact</h4>
             <span><FaLocationDot /> 705, Somdutt Chamber, New Delhi- 110066</span>
-            <span><FaPhone /> +91 98765 43210</span>
+            <span><FaPhone /> +91 000000000</span>
             <span><MdEmail /> hello@tnttourandtravels.in</span>
           </Col>
         </Row>

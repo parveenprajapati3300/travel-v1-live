@@ -65,7 +65,7 @@ function Contact() {
             <div className="contact-panel glass-card" data-aos="fade-right">
               <h3>TNT Tour and Travels</h3>
               <p><FaLocationDot /> 705, Somdutt Chamber, New Delhi- 110066</p>
-              <p><FaPhone /> +91 98765 43210</p>
+              <p><FaPhone /> +91 000000000</p>
               <p><MdEmail /> hello@tnttourandtravels.in</p>
               <p><FaRegClock /> Mon to Sat, 10:00 AM - 7:00 PM</p>
             </div>
@@ -87,7 +87,7 @@ function Contact() {
                 </Col>
                 <Col md={6}>
                   <Form.Label>Phone</Form.Label>
-                  <Form.Control name="phone" value={form.phone} onChange={updateField} placeholder="+91 98765 43210" isInvalid={!!errors.phone} />
+                  <Form.Control name="phone" value={form.phone} onChange={updateField} placeholder="+91 000000000" isInvalid={!!errors.phone} />
                   <Form.Control.Feedback type="invalid">{errors.phone}</Form.Control.Feedback>
                 </Col>
                 <Col md={6}>

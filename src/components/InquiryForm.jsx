@@ -92,7 +92,7 @@ function InquiryForm({ compact = false, defaultDestination = '', onSuccess }) {
         </Col>
         <Col md={compact ? 12 : 6}>
           <Form.Label>Phone Number</Form.Label>
-          <Form.Control name="phone" value={form.phone} onChange={updateField} placeholder="+91 98765 43210" isInvalid={!!errors.phone} />
+          <Form.Control name="phone" value={form.phone} onChange={updateField} placeholder="+91 000000000" isInvalid={!!errors.phone} />
           <Form.Control.Feedback type="invalid">{errors.phone}</Form.Control.Feedback>
         </Col>
         <Col md={compact ? 12 : 6}>
