@@ -4,6 +4,8 @@ import { Link } from 'react-router-dom'
 import {
   FaCalendarDays,
   FaArrowRight,
+  FaChevronLeft,
+  FaChevronRight,
   FaHeadset,
   FaPeopleGroup,
   FaShieldHeart,
@@ -18,6 +20,45 @@ import Testimonial from '../components/Testimonial'
 import { getCategories, getDestinations, getPackages, getPackagesByCategory } from '../services/api'
 import { slugify } from '../utils/slug'
 
+const travelerStories = [
+  {
+    image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=300&q=80',
+    name: 'Nisha Rao',
+    trip: 'Goa Friends Weekend',
+    text: 'The trip felt very smooth from pickup to hotel check-in. The team stayed connected throughout and made the weekend easy for our group.',
+  },
+  {
+    image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=300&q=80',
+    name: 'Rahul Mehta',
+    trip: 'Manali Group Tour',
+    text: 'Great planning, clean stay, and a friendly captain. I joined solo but came back with a full travel circle.',
+  },
+  {
+    image: 'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?auto=format&fit=crop&w=300&q=80',
+    name: 'Priya Sharma',
+    trip: 'Dubai Family Escape',
+    text: 'Everything was handled professionally. Itinerary, transfers, and support were clear, so our family could simply enjoy the holiday.',
+  },
+  {
+    image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=300&q=80',
+    name: 'Aman Verma',
+    trip: 'Rishikesh Adventure',
+    text: 'The experience was energetic and well managed. Activities were on time and the local guidance made the trip feel premium.',
+  },
+  {
+    image: 'https://images.unsplash.com/photo-1489424731084-a5d8b219a5bb?auto=format&fit=crop&w=300&q=80',
+    name: 'Simran Kaur',
+    trip: 'Kashmir Honeymoon',
+    text: 'Beautiful hotels, polite coordination, and a very comfortable plan. The whole trip felt personal and carefully arranged.',
+  },
+  {
+    image: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=300&q=80',
+    name: 'Vikram Saini',
+    trip: 'Thailand Group Escape',
+    text: 'The schedule had the right balance of sightseeing and free time. Support was quick, and the overall vibe was fantastic.',
+  },
+]
+
 function Home() {
   const [homeDomesticPackages, setHomeDomesticPackages] = useState([])
   const [homeInternationalPackages, setHomeInternationalPackages] = useState([])
@@ -26,6 +67,8 @@ function Home() {
   const [groupTrips, setGroupTrips] = useState([])
   const [activeDestinationTab, setActiveDestinationTab] = useState('domestic')
   const [activePackageTab, setActivePackageTab] = useState('domestic')
+  const [activeStoryIndex, setActiveStoryIndex] = useState(0)
+  const [storyTransition, setStoryTransition] = useState(true)
 
   useEffect(() => {
     Promise.all([getPackages('domestic'), getPackages('international'), getDestinations(), getCategories(), getPackagesByCategory('Group Tour')])
@@ -45,16 +88,57 @@ function Home() {
       })
   }, [])
 
+  useEffect(() => {
+    const timer = window.setInterval(() => {
+      setStoryTransition(true)
+      setActiveStoryIndex((current) => current + 1)
+    }, 2800)
+
+    return () => window.clearInterval(timer)
+  }, [])
+
   const activePackages = activePackageTab === 'domestic' ? homeDomesticPackages : homeInternationalPackages
   const activeRoute = activePackageTab === 'domestic' ? '/domestic' : '/international'
   const activeViewLabel = activePackageTab === 'domestic' ? 'Domestic' : 'International'
   const activeDestinations = homeDestinations
     .filter((destination) => (destination.type || 'domestic').toLowerCase() === activeDestinationTab)
     .slice(0, 4)
-  const storyItems = [...homeDomesticPackages, ...homeInternationalPackages]
-    .flatMap((item) => (item.reviews || []).map((review) => [item.title, item.packageDestination || item.location, review]))
-    .slice(0, 3)
   const communityImages = homeDestinations.slice(0, 4)
+  const whyImages = [...homeDestinations, ...homeDomesticPackages, ...homeInternationalPackages]
+    .map((item) => item.image)
+    .filter(Boolean)
+    .filter((image, index, list) => list.indexOf(image) === index)
+    .slice(0, 5)
+  const totalPackages = homeDomesticPackages.length + homeInternationalPackages.length
+  const showPreviousStory = () => {
+    if (activeStoryIndex === 0) {
+      setStoryTransition(false)
+      setActiveStoryIndex(travelerStories.length)
+      window.requestAnimationFrame(() => {
+        window.requestAnimationFrame(() => {
+          setStoryTransition(true)
+          setActiveStoryIndex(travelerStories.length - 1)
+        })
+      })
+      return
+    }
+
+    setStoryTransition(true)
+    setActiveStoryIndex((current) => current - 1)
+  }
+  const showNextStory = () => {
+    setStoryTransition(true)
+    setActiveStoryIndex((current) => current + 1)
+  }
+  const handleStoryTransitionEnd = () => {
+    if (activeStoryIndex >= travelerStories.length) {
+      setStoryTransition(false)
+      setActiveStoryIndex(0)
+      window.requestAnimationFrame(() => {
+        window.requestAnimationFrame(() => setStoryTransition(true))
+      })
+    }
+  }
 
   return (
     <>
@@ -206,50 +290,70 @@ function Home() {
 
       <section className="section gradient-band">
         <Container>
-          <Row className="g-4 align-items-center">
-            <Col lg={5}>
-              <SectionHeading center={false} eyebrow="Why Choose Us" title="In-House Operations, Hassle-Free Experience" text="No third-party dependency for critical trip flow. Transport, stay, route, and support are managed as one travel experience." />
-            </Col>
-            <Col lg={7}>
-              <Row className="g-3">
+          <div className="why-premium-layout">
+            <div className="why-photo-mosaic" data-aos="fade-right">
+              {whyImages.map((image, index) => (
+                <img key={image} src={image} alt={`TNT travel experience ${index + 1}`} />
+              ))}
+              {!whyImages.length && (
+                <div className="why-photo-empty">Add destinations or packages from admin to show travel moments here.</div>
+              )}
+            </div>
+            <div className="why-premium-copy" data-aos="fade-left">
+              <span className="eyebrow">Why Choose Us</span>
+              <h2>Why TNT Tour and Travels</h2>
+              <p className="why-quote">“A well-planned journey should feel effortless from the first call to the final day.”</p>
+              <p>No third-party dependency for critical trip flow. Transport, stay, route, itinerary, and support are managed as one travel experience by our team.</p>
+              <div className="why-premium-stats">
                 {[
-                  [<FaShieldHeart />, 'In-house Operations', 'Core planning and execution stay with our travel team.'],
-                  [<FaTruckPlane />, 'Hassle-Free Experience', 'Transport, stay, route, and itinerary managed end to end.'],
-                  [<FaHeadset />, 'Callback Support', 'Quick consultation for dates, budget, and trip style.'],
-                  [<FaWandMagicSparkles />, 'Customized Packages', 'Trips shaped around group, family, honeymoon, or solo needs.'],
-                ].map(([icon, title, text]) => (
-                  <Col sm={6} key={title}>
-                    <div className="why-card glass-card" data-aos="fade-up">
-                      <span>{icon}</span>
-                      <h3>{title}</h3>
-                      <p>{text}</p>
-                    </div>
-                  </Col>
+                  [<FaUsers />, `${totalPackages}+`, 'Live Packages'],
+                  [<FaTruckPlane />, `${homeDestinations.length}+`, 'Destinations'],
+                  [<FaWandMagicSparkles />, `${homeCategories.length}+`, 'Tour Themes'],
+                  [<FaShieldHeart />, 'In-house', 'Operations'],
+                  [<FaHeadset />, 'Quick', 'Callback Support'],
+                  [<FaPeopleGroup />, `${travelerStories.length}+`, 'Traveler Reviews'],
+                ].map(([icon, value, label]) => (
+                  <div className="why-premium-stat" key={label}>
+                    <span>{icon}</span>
+                    <strong>{value}</strong>
+                    <small>{label}</small>
+                  </div>
                 ))}
-              </Row>
-            </Col>
-          </Row>
+              </div>
+            </div>
+          </div>
         </Container>
       </section>
 
       <section className="section" id="stories">
         <Container>
           <SectionHeading eyebrow="Traveler Stories" title="Reviews And Travel Experiences" />
-          <Row className="g-4">
-            {storyItems.map(([name, trip, text]) => (
-              <Col md={4} key={name}>
-                <Testimonial name={name} trip={trip} text={text} />
-              </Col>
-            ))}
-            {!storyItems.length && (
-              <Col xs={12}>
-                <div className="empty-state-card">
-                  <h3>No traveler stories added yet</h3>
-                  <p>Add reviews while creating packages from admin to show stories here.</p>
-                </div>
-              </Col>
-            )}
-          </Row>
+          <div className="testimonial-carousel smooth-story-carousel">
+            <button className="story-carousel-control previous" type="button" onClick={showPreviousStory} aria-label="Previous review">
+              <FaChevronLeft />
+            </button>
+            <div className="story-carousel-window">
+              <div
+                className={`story-carousel-track ${storyTransition ? '' : 'no-transition'}`}
+                style={{ transform: `translateX(calc(-${activeStoryIndex} * var(--story-card-step)))` }}
+                onTransitionEnd={handleStoryTransitionEnd}
+              >
+                {travelerStories.concat(travelerStories.slice(0, 3)).map((story, index) => (
+                  <div className="story-carousel-card" key={`${story.name}-${index}`}>
+                    <Testimonial image={story.image} name={story.name} trip={story.trip} text={story.text} />
+                  </div>
+                ))}
+              </div>
+            </div>
+            <button className="story-carousel-control next" type="button" onClick={showNextStory} aria-label="Next review">
+              <FaChevronRight />
+            </button>
+            <div className="story-carousel-dots" aria-hidden="true">
+              {travelerStories.map((story, index) => (
+                <span className={index === activeStoryIndex % travelerStories.length ? 'active' : ''} key={story.name} />
+              ))}
+            </div>
+          </div>
         </Container>
       </section>
 
