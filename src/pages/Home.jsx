@@ -59,6 +59,14 @@ const travelerStories = [
   },
 ]
 
+const whyTravelImages = [
+  'https://images.unsplash.com/photo-1522506209496-4536d9020ec4?auto=format&fit=crop&w=900&q=80',
+  'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=80',
+  'https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=900&q=80',
+  'https://images.unsplash.com/photo-1506929562872-bb421503ef21?auto=format&fit=crop&w=900&q=80',
+  'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=900&q=80',
+]
+
 function Home() {
   const [homeDomesticPackages, setHomeDomesticPackages] = useState([])
   const [homeInternationalPackages, setHomeInternationalPackages] = useState([])
@@ -69,6 +77,7 @@ function Home() {
   const [activePackageTab, setActivePackageTab] = useState('domestic')
   const [activeStoryIndex, setActiveStoryIndex] = useState(0)
   const [storyTransition, setStoryTransition] = useState(true)
+  const [showWhyMore, setShowWhyMore] = useState(false)
 
   useEffect(() => {
     Promise.all([getPackages('domestic'), getPackages('international'), getDestinations(), getCategories(), getPackagesByCategory('Group Tour')])
@@ -104,11 +113,6 @@ function Home() {
     .filter((destination) => (destination.type || 'domestic').toLowerCase() === activeDestinationTab)
     .slice(0, 4)
   const communityImages = homeDestinations.slice(0, 4)
-  const whyImages = [...homeDestinations, ...homeDomesticPackages, ...homeInternationalPackages]
-    .map((item) => item.image)
-    .filter(Boolean)
-    .filter((image, index, list) => list.indexOf(image) === index)
-    .slice(0, 5)
   const totalPackages = homeDomesticPackages.length + homeInternationalPackages.length
   const showPreviousStory = () => {
     if (activeStoryIndex === 0) {
@@ -292,18 +296,30 @@ function Home() {
         <Container>
           <div className="why-premium-layout">
             <div className="why-photo-mosaic" data-aos="fade-right">
-              {whyImages.map((image, index) => (
+              {whyTravelImages.map((image, index) => (
                 <img key={image} src={image} alt={`TNT travel experience ${index + 1}`} />
               ))}
-              {!whyImages.length && (
-                <div className="why-photo-empty">Add destinations or packages from admin to show travel moments here.</div>
-              )}
             </div>
             <div className="why-premium-copy" data-aos="fade-left">
               <span className="eyebrow">Why Choose Us</span>
               <h2>Why TNT Tour and Travels</h2>
               <p className="why-quote">“A well-planned journey should feel effortless from the first call to the final day.”</p>
+              <p>We plan every journey with hand-picked routes, comfortable stays, reliable transport, and quick support, so your holiday feels smooth from booking to return.</p>
               <p>No third-party dependency for critical trip flow. Transport, stay, route, itinerary, and support are managed as one travel experience by our team.</p>
+              {!showWhyMore && (
+                <button className="why-read-more-btn" type="button" onClick={() => setShowWhyMore(true)}>
+                  Read More
+                </button>
+              )}
+              {showWhyMore && (
+                <div className="why-more-content">
+                  <p>Whether it is a family vacation, honeymoon, weekend escape, or group departure, TNT Tour and Travels keeps the planning practical, transparent, and easy to follow.</p>
+                  <p>Our team keeps the package flow clear with practical day-wise planning, stay coordination, route guidance, and traveler support for every important step.</p>
+                  <button className="why-read-more-btn" type="button" onClick={() => setShowWhyMore(false)}>
+                    Read Less
+                  </button>
+                </div>
+              )}
               <div className="why-premium-stats">
                 {[
                   [<FaUsers />, `${totalPackages}+`, 'Live Packages'],

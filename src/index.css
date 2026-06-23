@@ -2473,6 +2473,27 @@ body.search-overlay-open {
   font-weight: 850;
 }
 
+.why-more-content {
+  display: grid;
+  gap: 1rem;
+}
+
+.why-read-more-btn {
+  width: fit-content;
+  margin-top: -0.2rem;
+  padding: 0;
+  border: 0;
+  color: var(--blue);
+  font-weight: 900;
+  background: transparent;
+  text-decoration: underline;
+  text-underline-offset: 0.28rem;
+}
+
+.why-read-more-btn:hover {
+  color: var(--teal);
+}
+
 .why-premium-stats {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
