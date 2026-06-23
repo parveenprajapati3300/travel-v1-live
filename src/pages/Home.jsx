@@ -17,6 +17,15 @@ import HeroCarousel from '../components/HeroCarousel'
 import PackageCard from '../components/PackageCard'
 import SectionHeading from '../components/SectionHeading'
 import Testimonial from '../components/Testimonial'
+import recognition1 from '../assets/recognitions/recognition-1.png'
+import recognition2 from '../assets/recognitions/recognition-2.png'
+import recognition3 from '../assets/recognitions/recognition-3.png'
+import recognition4 from '../assets/recognitions/recognition-4.png'
+import recognition5 from '../assets/recognitions/recognition-5.png'
+import recognition6 from '../assets/recognitions/recognition-6.png'
+import recognition7 from '../assets/recognitions/recognition-7.png'
+import recognition8 from '../assets/recognitions/recognition-8.png'
+import recognition9 from '../assets/recognitions/recognition-9.png'
 import { getCategories, getDestinations, getPackages, getPackagesByCategory } from '../services/api'
 import { slugify } from '../utils/slug'
 
@@ -65,6 +74,18 @@ const whyTravelImages = [
   'https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=900&q=80',
   'https://images.unsplash.com/photo-1506929562872-bb421503ef21?auto=format&fit=crop&w=900&q=80',
   'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=900&q=80',
+]
+
+const recognitionItems = [
+  { name: 'Startup India', image: recognition1 },
+  { name: 'MSME', image: recognition2 },
+  { name: 'Travelers Choice', image: recognition3 },
+  { name: 'Uttar Pradesh Tourism', image: recognition4 },
+  { name: 'ATOAI', image: recognition5 },
+  { name: 'Business Standard', image: recognition6 },
+  { name: 'IIMB', image: recognition7 },
+  { name: 'Uttar Pradesh Tourism Centre', image: recognition8 },
+  { name: 'Experience Bengal', image: recognition9 },
 ]
 
 function Home() {
@@ -367,6 +388,21 @@ function Home() {
             <div className="story-carousel-dots" aria-hidden="true">
               {travelerStories.map((story, index) => (
                 <span className={index === activeStoryIndex % travelerStories.length ? 'active' : ''} key={story.name} />
+              ))}
+            </div>
+          </div>
+        </Container>
+      </section>
+
+      <section className="section recognition-section">
+        <Container>
+          <SectionHeading eyebrow="Recognitions" title="Recognitions By Govt." text="Trusted travel operations, tourism associations, and community milestones that keep every TNT journey accountable." />
+          <div className="recognition-carousel" aria-label="Recognitions carousel">
+            <div className="recognition-track">
+              {[...recognitionItems, ...recognitionItems].map((item, index) => (
+                <article className="recognition-card" key={`${item.name}-${index}`}>
+                  <img src={item.image} alt={item.name} />
+                </article>
               ))}
             </div>
           </div>

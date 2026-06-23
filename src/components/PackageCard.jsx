@@ -1,6 +1,6 @@
 import { Badge, Button, Card } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
-import { FaArrowRight, FaClock, FaLocationDot, FaStar } from 'react-icons/fa6'
+import { FaCircleCheck, FaClock, FaLocationDot, FaStar } from 'react-icons/fa6'
 import { formatPrice } from '../utils/format'
 
 function PackageCard({ item }) {
@@ -21,16 +21,16 @@ function PackageCard({ item }) {
         <Card.Title>{item.title}</Card.Title>
         <div className="meta-row"><FaLocationDot /> {item.location}</div>
         <div className="meta-row"><FaClock /> {item.duration}</div>
-        <Card.Text>{item.description}</Card.Text>
+        <div className="package-highlight"><FaCircleCheck /> Stay, transport and support included</div>
       </Card.Body>
       <Card.Footer>
         <div>
           <small>Starting from</small>
           <strong>{formatPrice(item.price)}</strong>
+          <em>/person*</em>
         </div>
         <div className="card-actions">
-          <Button as={Link} to="/inquiry" className="btn-gradient" size="sm">Book Now</Button>
-          <Button as={Link} to={`/package/${item.id}`} variant="outline-dark" size="sm">Details <FaArrowRight /></Button>
+          <Button as={Link} to={`/package/${item.id}`} className="package-detail-btn" size="sm">View Details</Button>
         </div>
       </Card.Footer>
     </Card>
