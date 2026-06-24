@@ -1,10 +1,13 @@
 import dotenv from 'dotenv'
 import mongoose from 'mongoose'
 import process from 'node:process'
+import { dirname, resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import Destination from '../models/Destination.js'
 import Package from '../models/Package.js'
 
-dotenv.config({ path: './server/.env' })
+const __dirname = dirname(fileURLToPath(import.meta.url))
+dotenv.config({ path: resolve(__dirname, '..', '.env') })
 
 const destinationFromPackage = (packageItem) =>
   (packageItem.packageDestination || packageItem.location?.split(',')[0] || '').trim()

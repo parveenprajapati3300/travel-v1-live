@@ -1,9 +1,12 @@
 import dotenv from 'dotenv'
 import mongoose from 'mongoose'
 import process from 'node:process'
+import { dirname, resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import Category from '../models/Category.js'
 
-dotenv.config({ path: './server/.env' })
+const __dirname = dirname(fileURLToPath(import.meta.url))
+dotenv.config({ path: resolve(__dirname, '..', '.env') })
 
 const categories = [
   {

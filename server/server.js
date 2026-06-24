@@ -1,6 +1,8 @@
 import express from 'express'
 import cors from 'cors'
 import dotenv from 'dotenv'
+import { dirname, resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import connectDB from './config/db.js'
 import authRoutes from './routes/authRoutes.js'
 import contactRoutes from './routes/contactRoutes.js'
@@ -11,7 +13,8 @@ import categoryRoutes from './routes/categoryRoutes.js'
 import searchRoutes from './routes/searchRoutes.js'
 import seedDefaultAdmin from './utils/seedDefaultAdmin.js'
 
-dotenv.config({ path: './server/.env' })
+const __dirname = dirname(fileURLToPath(import.meta.url))
+dotenv.config({ path: resolve(__dirname, '.env') })
 await connectDB()
 await seedDefaultAdmin()
 

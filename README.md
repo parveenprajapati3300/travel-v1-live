@@ -1,22 +1,38 @@
-<<<<<<< HEAD
-# React + Vite
-
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
-
-## React Compiler
-
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
-
-Note: This will impact Vite dev & build performances.
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
-=======
 # travel-v1
->>>>>>> 0cdd25c89714a979cd73e37db86e20c263c6c418
+
+TripNest is a React + Vite frontend with an Express + MongoDB backend.
+
+## Local setup
+
+1. Install dependencies:
+
+```bash
+npm install
+```
+
+2. Create `server/.env` from `server/.env.example` and set:
+
+- `MONGO_URI`
+- `JWT_SECRET`
+- `ADMIN_SETUP_KEY`
+- `CLIENT_URL`
+
+3. Start the backend:
+
+```bash
+npm run server
+```
+
+4. Start the frontend in another terminal:
+
+```bash
+npm run dev
+```
+
+## Free deployment
+
+- Frontend: Vercel or Netlify
+- Backend: Render
+- Database: MongoDB Atlas free tier
+
+Use `VITE_API_URL` on the frontend and `CLIENT_URL` on the backend to point both sides at the live URLs.
