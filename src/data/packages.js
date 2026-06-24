@@ -357,6 +357,7 @@ export const packages = [
   },
 ]
 
+
 export const domesticPackages = packages.filter((item) => item.category === 'domestic')
 export const internationalPackages = packages.filter((item) => item.category === 'international')
 export const groupPackages = packages.filter((item) => item.category === 'group')
