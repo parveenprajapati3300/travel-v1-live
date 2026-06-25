@@ -20,8 +20,23 @@ await seedDefaultAdmin()
 
 const app = express()
 const PORT = process.env.PORT || 5000
+const clientDistPath = resolve(__dirname, '..', 'dist')
+const allowedOrigins = process.env.CLIENT_URL
+  ? process.env.CLIENT_URL.split(',').map((origin) => origin.trim()).filter(Boolean)
+  : null
 
-app.use(cors({ origin: process.env.CLIENT_URL || 'http://localhost:5173', credentials: true }))
+app.use(
+  cors({
+    origin(origin, callback) {
+      if (!origin || !allowedOrigins || allowedOrigins.includes(origin)) {
+        return callback(null, true)
+      }
+
+      return callback(new Error(`CORS blocked for origin: ${origin}`))
+    },
+    credentials: true,
+  }),
+)
 app.use(express.json())
 
 app.get('/api/health', (req, res) => {
@@ -35,6 +50,21 @@ app.use('/api/categories', categoryRoutes)
 app.use('/api/search', searchRoutes)
 app.use('/api/contact', contactRoutes)
 app.use('/api/inquiry', inquiryRoutes)
+
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(clientDistPath))
+}
+
+app.use((req, res, next) => {
+  if (!req.path.startsWith('/api')) {
+    if (process.env.NODE_ENV === 'production') {
+      return res.sendFile(resolve(clientDistPath, 'index.html'))
+    }
+    return res.status(404).send('Not found')
+  }
+
+  return next()
+})
 
 app.use((req, res) => {
   res.status(404).json({ message: 'API route not found' })
