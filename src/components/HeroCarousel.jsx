@@ -74,7 +74,7 @@ const heroSlides = [
   {
     image: new URL('../assets/travel/banner/banner-06.jpg', import.meta.url).href,
     tripWords: ['Dubai', 'Singapore', 'Phuket', 'Vietnam', 'Sri Lanka', 'Maldives', 'Paris'],
-    title: 'Premium City and Island Journeys parveen',
+    title: 'Premium City and Island Journeys',
     copy: 'Handpicked hotels, smart transfers, and smooth support for travelers who want comfort first.',
     highlights: ['Premium Stays', 'Island Trips', 'City Tours', 'Transfers', 'Custom Itineraries'],
   },
