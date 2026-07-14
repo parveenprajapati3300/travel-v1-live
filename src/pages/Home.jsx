@@ -121,6 +121,7 @@ function Home() {
   const [homeDestinations, setHomeDestinations] = useState([])
   const [homeCategories, setHomeCategories] = useState([])
   const [groupTrips, setGroupTrips] = useState([])
+  const [loading, setLoading] = useState(true)
   const [activeDestinationTab, setActiveDestinationTab] = useState('domestic')
   const [activePackageTab, setActivePackageTab] = useState('domestic')
   const [activeStoryIndex, setActiveStoryIndex] = useState(0)
@@ -128,6 +129,7 @@ function Home() {
   const [showWhyMore, setShowWhyMore] = useState(false)
 
   useEffect(() => {
+    setLoading(true)
     Promise.all([getPackages('domestic'), getPackages('international'), getDestinations(), getCategories(), getPackagesByCategory('Group Tour')])
       .then(([domesticResponse, internationalResponse, destinationResponse, categoryResponse, groupResponse]) => {
         setHomeDomesticPackages(domesticResponse.data)
@@ -142,6 +144,9 @@ function Home() {
         setHomeDestinations([])
         setHomeCategories([])
         setGroupTrips([])
+      })
+      .finally(() => {
+        setLoading(false)
       })
   }, [])
 
@@ -161,6 +166,9 @@ function Home() {
     .filter((destination) => (destination.type || 'domestic').toLowerCase() === activeDestinationTab)
     .slice(0, 6)
   const communityImages = homeDestinations.slice(0, 4)
+  const destinationSkeletons = Array.from({ length: 6 }, (_, index) => index)
+  const themeSkeletons = Array.from({ length: 6 }, (_, index) => index)
+  const packageSkeletons = Array.from({ length: 3 }, (_, index) => index)
   const travelerStoryDestinations = useMemo(() => {
     const sourceDestinations = activeDestinations.length ? activeDestinations : homeDestinations.slice(0, 3)
     return sourceDestinations.slice(0, 3)
@@ -226,7 +234,18 @@ function Home() {
               </button>
             </div>
             <Row className="g-4">
-              {activeDestinations.map((destination) => (
+              {loading ? destinationSkeletons.map((slot) => (
+                <Col xs={12} sm={6} lg={4} key={`destination-skeleton-${slot}`}>
+                  <article className="destination-standard-card card-skeleton destination-card-skeleton" aria-busy="true">
+                    <div className="destination-image-link card-skeleton-media" />
+                    <div>
+                      <span className="card-skeleton-line card-skeleton-line-lg" />
+                      <span className="card-skeleton-line card-skeleton-line-sm" />
+                      <span className="card-skeleton-link" />
+                    </div>
+                  </article>
+                </Col>
+              )) : activeDestinations.length ? activeDestinations.map((destination) => (
                 <Col xs={12} sm={6} lg={4} key={destination.name}>
                   <article className="destination-standard-card" data-aos="fade-up">
                     <Link className="destination-image-link" to={`/destination/${slugify(destination.name)}`} aria-label={`Explore ${destination.name}`}>
@@ -239,8 +258,7 @@ function Home() {
                     </div>
                   </article>
                 </Col>
-              ))}
-              {!activeDestinations.length && (
+              )) : (
                 <Col xs={12}>
                   <div className="empty-state-card">
                     <h3>No destinations added yet</h3>
@@ -260,7 +278,18 @@ function Home() {
             <Button as={Link} to="/categories" variant="outline-dark mb-4">View All</Button>
           </div>
           <Row className="g-4">
-            {homeCategories.slice(0, 6).map((category) => (
+            {loading ? themeSkeletons.map((slot) => (
+              <Col md={6} lg={4} key={`theme-skeleton-${slot}`}>
+                <article className="theme-standard-card card-skeleton theme-card-skeleton" aria-busy="true">
+                  <div className="theme-image-link card-skeleton-media" />
+                  <div>
+                    <span className="card-skeleton-line card-skeleton-line-lg" />
+                    <span className="card-skeleton-line card-skeleton-line-sm" />
+                    <span className="card-skeleton-link" />
+                  </div>
+                </article>
+              </Col>
+            )) : homeCategories.length ? homeCategories.slice(0, 6).map((category) => (
               <Col md={6} lg={4} key={category._id || category.name}>
                 <article className="theme-standard-card" data-aos="fade-up">
                   <Link className="theme-image-link" to={`/category/${slugify(category.name)}`} aria-label={`Explore ${category.name}`}>
@@ -272,8 +301,7 @@ function Home() {
                   </div>
                 </article>
               </Col>
-            ))}
-            {!homeCategories.length && (
+            )) : (
               <Col xs={12}>
                 <div className="empty-state-card">
                   <h3>No categories added yet</h3>
@@ -301,10 +329,26 @@ function Home() {
               </button>
             </div>
             <Row className="g-4">
-              {activePackages.slice(0, 3).map((item) => (
+              {loading ? packageSkeletons.map((slot) => (
+                <Col md={6} lg={4} key={`package-skeleton-${slot}`}>
+                  <article className="package-card h-100 package-card-skeleton card-skeleton" aria-busy="true">
+                    <div className="card-image-wrap card-skeleton-media" />
+                    <div className="package-card-skeleton-body">
+                      <div className="card-skeleton-line card-skeleton-line-xs" />
+                      <div className="card-skeleton-line card-skeleton-line-lg" />
+                      <div className="card-skeleton-line card-skeleton-line-md" />
+                      <div className="card-skeleton-line card-skeleton-line-md" />
+                      <div className="card-skeleton-line card-skeleton-line-lg card-skeleton-line-short" />
+                    </div>
+                    <div className="package-card-skeleton-footer">
+                      <div className="card-skeleton-line card-skeleton-line-sm" />
+                      <div className="card-skeleton-link" />
+                    </div>
+                  </article>
+                </Col>
+              )) : activePackages.length ? activePackages.slice(0, 3).map((item) => (
                 <Col md={6} lg={4} key={item._id || item.id}><PackageCard item={item} /></Col>
-              ))}
-              {!activePackages.length && (
+              )) : (
                 <Col xs={12}>
                   <div className="empty-state-card">
                     <h3>No {activeViewLabel.toLowerCase()} packages added yet</h3>

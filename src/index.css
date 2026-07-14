@@ -992,6 +992,7 @@ p {
 .hero-inline-search .hero-destination-search .btn {
   background: linear-gradient(135deg, var(--teal), var(--blue));
   box-shadow: 0 12px 28px rgba(11, 95, 255, 0.24);
+      margin-right: 10px;
 }
 
 .hero-wravel-actions {
@@ -5143,6 +5144,99 @@ body.gallery-lightbox-open {
   border-radius: 8px;
   background: #fff;
   box-shadow: 0 14px 36px rgba(15, 45, 70, 0.08);
+}
+
+.card-skeleton {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(180deg, #f3f7fb 0%, #e8eef5 100%);
+}
+
+.card-skeleton::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.56), transparent);
+  animation: skeleton-shimmer 1.35s infinite;
+  z-index: 2;
+}
+
+.card-skeleton-media {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, rgba(196, 208, 221, 0.95), rgba(227, 235, 243, 0.95));
+}
+
+.card-skeleton-line,
+.card-skeleton-link {
+  position: relative;
+  overflow: hidden;
+  display: block;
+  border-radius: 999px;
+  background: linear-gradient(135deg, rgba(196, 208, 221, 0.95), rgba(227, 235, 243, 0.95));
+}
+
+.card-skeleton-line {
+  height: 0.95rem;
+}
+
+.card-skeleton-line-lg {
+  width: 78%;
+  height: 1.55rem;
+}
+
+.card-skeleton-line-md {
+  width: 62%;
+}
+
+.card-skeleton-line-sm {
+  width: 40%;
+}
+
+.card-skeleton-line-xs {
+  width: 28%;
+}
+
+.card-skeleton-link {
+  width: 5.6rem;
+  height: 1rem;
+}
+
+.destination-card-skeleton .card-skeleton-media,
+.theme-card-skeleton .card-skeleton-media {
+  height: 310px;
+  border-radius: 28px;
+  box-shadow: 0 16px 34px rgba(15, 45, 70, 0.08);
+}
+
+.package-card-skeleton {
+  border-color: rgba(16, 33, 43, 0.06);
+}
+
+.package-card-skeleton .card-skeleton-media {
+  height: 210px;
+}
+
+.package-card-skeleton-body {
+  display: grid;
+  gap: 0.7rem;
+  padding: 1rem 1.1rem 0.9rem;
+}
+
+.package-card-skeleton-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.1rem 1.15rem;
+  border-top: 1px solid rgba(16, 33, 43, 0.08);
+}
+
+@keyframes skeleton-shimmer {
+  100% {
+    transform: translateX(100%);
+  }
 }
 
 .admin-package-grid {
