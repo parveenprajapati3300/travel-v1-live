@@ -5,6 +5,7 @@ import { FaBed, FaBus, FaClock, FaIndianRupeeSign, FaLocationDot, FaStar, FaTags
 import Gallery from '../components/Gallery'
 import InquiryForm from '../components/InquiryForm'
 import PackageCard from '../components/PackageCard'
+import { PackageCardSkeleton, PackageDetailSkeleton } from '../components/CardSkeletons'
 import SectionHeading from '../components/SectionHeading'
 import { getPackage, getPackages } from '../services/api'
 import { formatPrice } from '../utils/format'
@@ -20,22 +21,30 @@ function PackageDetails() {
   const [packageData, setPackageData] = useState(undefined)
   const item = packageData?.id === id ? packageData : null
   const [relatedItems, setRelatedItems] = useState([])
+  const [relatedLoading, setRelatedLoading] = useState(true)
   const [showInquiryModal, setShowInquiryModal] = useState(false)
   const [showStickyCta, setShowStickyCta] = useState(false)
   const [showSuccessToast, setShowSuccessToast] = useState(false)
 
   useEffect(() => {
+    setPackageData(undefined)
     getPackage(id)
       .then(({ data }) => setPackageData(data))
       .catch(() => setPackageData(null))
   }, [id])
 
   useEffect(() => {
-    if (!item?.category) return
+    setRelatedLoading(true)
+    if (!item?.category) {
+      setRelatedItems([])
+      setRelatedLoading(false)
+      return
+    }
 
     getPackages(item.category)
       .then(({ data }) => setRelatedItems(data.filter((packageItem) => packageItem.id !== item.id)))
       .catch(() => setRelatedItems([]))
+      .finally(() => setRelatedLoading(false))
   }, [item])
 
   useEffect(() => {
@@ -46,13 +55,7 @@ function PackageDetails() {
   }, [])
 
   if (packageData === undefined) {
-    return (
-      <section className="page-section text-center">
-        <Container>
-          <div className="admin-loading">Loading package details...</div>
-        </Container>
-      </section>
-    )
+    return <PackageDetailSkeleton />
   }
 
   if (!item) {
@@ -281,7 +284,9 @@ function PackageDetails() {
         <Container>
           <SectionHeading eyebrow="Related Packages" title="More Trips In This Style" />
           <Row className="g-4">
-            {related.map((packageItem) => <Col md={6} lg={4} key={packageItem._id || packageItem.id}><PackageCard item={packageItem} /></Col>)}
+            {relatedLoading ? Array.from({ length: 3 }, (_, index) => (
+              <Col md={6} lg={4} key={`related-package-skeleton-${index}`}><PackageCardSkeleton /></Col>
+            )) : related.map((packageItem) => <Col md={6} lg={4} key={packageItem._id || packageItem.id}><PackageCard item={packageItem} /></Col>)}
           </Row>
         </Container>
       </section>

@@ -3,6 +3,7 @@ import { Badge, Button, Col, Container, Row } from 'react-bootstrap'
 import { Link, useParams } from 'react-router-dom'
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa6'
 import PackageCard from '../components/PackageCard'
+import { PackageCardSkeleton } from '../components/CardSkeletons'
 import SectionHeading from '../components/SectionHeading'
 import { getDestinations, getPackagesByDestination } from '../services/api'
 import { formatPrice } from '../utils/format'
@@ -32,6 +33,7 @@ function DestinationPackages() {
   const destinationName = destination?.name || fallbackName
 
   useEffect(() => {
+    setLoading(true)
     getPackagesByDestination(destinationName)
       .then(({ data }) => {
         setPackageItems(data)
@@ -74,7 +76,11 @@ function DestinationPackages() {
             <Button as={Link} to="/inquiry" className="btn-gradient">Plan Custom Trip <FaArrowRight /></Button>
           </div>
           {loading ? (
-            <div className="admin-loading">Loading destination packages...</div>
+            <Row className="g-4">
+              {Array.from({ length: 3 }, (_, index) => (
+                <Col md={6} lg={4} key={`destination-package-skeleton-${index}`}><PackageCardSkeleton /></Col>
+              ))}
+            </Row>
           ) : (
             <Row className="g-4">
               {relatedPackages.map((item) => (

@@ -2,17 +2,20 @@ import { useEffect, useState } from 'react'
 import { Col, Container, Row } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
 import { FaArrowRight } from 'react-icons/fa6'
+import { ThemeCardSkeleton } from '../components/CardSkeletons'
 import SectionHeading from '../components/SectionHeading'
 import { getCategories } from '../services/api'
 import { slugify } from '../utils/slug'
 
 function Categories() {
   const [categories, setCategories] = useState([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     getCategories()
       .then(({ data }) => setCategories(data))
       .catch(() => setCategories([]))
+      .finally(() => setLoading(false))
   }, [])
 
   return (
@@ -22,7 +25,9 @@ function Categories() {
           <SectionHeading eyebrow="Themes" title="All Holiday Themes" text="Choose any admin-created category and see related packages." />
         </div>
         <Row className="g-4">
-          {categories.map((category) => (
+          {loading ? Array.from({ length: 6 }, (_, index) => (
+            <Col md={6} lg={4} key={`category-skeleton-${index}`}><ThemeCardSkeleton /></Col>
+          )) : categories.map((category) => (
             <Col md={6} lg={4} key={category._id || category.name}>
               <Link className="theme-category-card" to={`/category/${slugify(category.name)}`} data-aos="fade-up">
                 <img src={category.image} alt={category.name} />
@@ -31,7 +36,7 @@ function Categories() {
               </Link>
             </Col>
           ))}
-          {!categories.length && (
+          {!loading && !categories.length && (
             <Col xs={12}>
               <div className="empty-state-card">
                 <h3>No categories added yet</h3>

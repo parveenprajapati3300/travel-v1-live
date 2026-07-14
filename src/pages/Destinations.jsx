@@ -3,6 +3,7 @@ import { Col, Container, Row } from 'react-bootstrap'
 import { Link, useSearchParams } from 'react-router-dom'
 import { FaArrowRight } from 'react-icons/fa6'
 import PackageCard from '../components/PackageCard'
+import { DestinationCardSkeleton, PackageCardSkeleton } from '../components/CardSkeletons'
 import SectionHeading from '../components/SectionHeading'
 import { getDestinations, getPackages } from '../services/api'
 import { formatPrice } from '../utils/format'
@@ -14,6 +15,7 @@ function Destinations() {
   const searchTerm = (searchParams.get('search') || '').trim().toLowerCase()
   const [items, setItems] = useState([])
   const [destinations, setDestinations] = useState([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     Promise.all([getPackages(), getDestinations(selectedType)])
@@ -25,6 +27,7 @@ function Destinations() {
         setItems([])
         setDestinations([])
       })
+      .finally(() => setLoading(false))
   }, [selectedType])
 
   const filteredDestinations = useMemo(() => {
@@ -51,7 +54,13 @@ function Destinations() {
     <section className="page-section soft-bg listing-page">
       <Container>
         <SectionHeading eyebrow="Destinations" title="Browse Trips By Place, Style, And Budget" text="Domestic routes, international escapes, group trips, and custom packages collected in one marketplace view." />
-        {filteredDestinations.length > 0 && (
+        {loading ? (
+          <Row className="g-4 mb-5">
+            {Array.from({ length: 4 }, (_, index) => (
+              <Col md={6} lg={3} key={`destination-list-skeleton-${index}`}><DestinationCardSkeleton className="mini-destination-card-skeleton" /></Col>
+            ))}
+          </Row>
+        ) : filteredDestinations.length > 0 && (
           <Row className="g-4 mb-5">
             {filteredDestinations.map((item) => (
               <Col md={6} lg={3} key={item._id}>
@@ -71,8 +80,10 @@ function Destinations() {
         )}
         <SectionHeading eyebrow="Packages" title="All Available Packages" />
         <Row className="g-4">
-          {filteredItems.map((item) => <Col md={6} lg={4} key={item._id || item.id}><PackageCard item={item} /></Col>)}
-          {!filteredItems.length && (
+          {loading ? Array.from({ length: 3 }, (_, index) => (
+            <Col md={6} lg={4} key={`package-list-skeleton-${index}`}><PackageCardSkeleton /></Col>
+          )) : filteredItems.map((item) => <Col md={6} lg={4} key={item._id || item.id}><PackageCard item={item} /></Col>)}
+          {!loading && !filteredItems.length && (
             <Col xs={12}>
               <div className="empty-state-card">
                 <h3>No packages found</h3>

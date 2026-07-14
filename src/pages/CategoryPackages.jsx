@@ -3,6 +3,7 @@ import { Button, Col, Container, Row } from 'react-bootstrap'
 import { Link, useParams } from 'react-router-dom'
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa6'
 import PackageCard from '../components/PackageCard'
+import { PackageCardSkeleton } from '../components/CardSkeletons'
 import SectionHeading from '../components/SectionHeading'
 import { getCategories, getPackagesByCategory } from '../services/api'
 import { findBySlug } from '../utils/slug'
@@ -27,6 +28,7 @@ function CategoryPackages() {
   }, [])
 
   useEffect(() => {
+    setLoading(true)
     getPackagesByCategory(categoryName)
       .then(({ data }) => setPackageItems(data))
       .catch(() => {
@@ -55,7 +57,11 @@ function CategoryPackages() {
         <Container>
           <SectionHeading eyebrow="Packages" title={`${categoryName} Packages`} />
           {loading ? (
-            <div className="admin-loading">Loading category packages...</div>
+            <Row className="g-4">
+              {Array.from({ length: 3 }, (_, index) => (
+                <Col md={6} lg={4} key={`category-package-skeleton-${index}`}><PackageCardSkeleton /></Col>
+              ))}
+            </Row>
           ) : (
             <Row className="g-4">
               {packageItems.map((item) => (

@@ -1,16 +1,19 @@
 import { useEffect, useState } from 'react'
 import { Col, Container, Row } from 'react-bootstrap'
 import PackageCard from '../components/PackageCard'
+import { PackageCardSkeleton } from '../components/CardSkeletons'
 import SectionHeading from '../components/SectionHeading'
 import { getPackages } from '../services/api'
 
 function International() {
   const [items, setItems] = useState([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     getPackages('international')
       .then(({ data }) => setItems(data))
       .catch(() => setItems([]))
+      .finally(() => setLoading(false))
   }, [])
 
   return (
@@ -28,8 +31,10 @@ function International() {
           ))}
         </div> */}
         <Row className="g-4">
-          {items.map((item) => <Col md={6} lg={4} key={item._id || item.id}><PackageCard item={item} /></Col>)}
-          {!items.length && (
+          {loading ? Array.from({ length: 3 }, (_, index) => (
+            <Col md={6} lg={4} key={`international-skeleton-${index}`}><PackageCardSkeleton /></Col>
+          )) : items.map((item) => <Col md={6} lg={4} key={item._id || item.id}><PackageCard item={item} /></Col>)}
+          {!loading && !items.length && (
             <Col xs={12}>
               <div className="empty-state-card">
                 <h3>No international packages added yet</h3>
