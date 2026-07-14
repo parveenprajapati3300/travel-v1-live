@@ -159,7 +159,7 @@ function Home() {
   const activeViewLabel = activePackageTab === 'domestic' ? 'Domestic' : 'International'
   const activeDestinations = homeDestinations
     .filter((destination) => (destination.type || 'domestic').toLowerCase() === activeDestinationTab)
-    .slice(0, 4)
+    .slice(0, 6)
   const communityImages = homeDestinations.slice(0, 4)
   const travelerStoryDestinations = useMemo(() => {
     const sourceDestinations = activeDestinations.length ? activeDestinations : homeDestinations.slice(0, 3)
@@ -227,7 +227,7 @@ function Home() {
             </div>
             <Row className="g-4">
               {activeDestinations.map((destination) => (
-                <Col md={6} lg={3} key={destination.name}>
+                <Col xs={12} sm={6} lg={4} key={destination.name}>
                   <article className="destination-standard-card" data-aos="fade-up">
                     <Link className="destination-image-link" to={`/destination/${slugify(destination.name)}`} aria-label={`Explore ${destination.name}`}>
                       <img src={destination.image} alt={destination.name} />
@@ -262,11 +262,15 @@ function Home() {
           <Row className="g-4">
             {homeCategories.slice(0, 6).map((category) => (
               <Col md={6} lg={4} key={category._id || category.name}>
-                <Link className="theme-category-card" to={`/category/${slugify(category.name)}`} data-aos="fade-up">
-                  <img src={category.image} alt={category.name} />
-                  <span>{category.name}</span>
-                  <strong>Explore <FaArrowRight /></strong>
-                </Link>
+                <article className="theme-standard-card" data-aos="fade-up">
+                  <Link className="theme-image-link" to={`/category/${slugify(category.name)}`} aria-label={`Explore ${category.name}`}>
+                    <img src={category.image} alt={category.name} />
+                  </Link>
+                  <div>
+                    <h3>{category.name}</h3>
+                    <Link to={`/category/${slugify(category.name)}`}>Explore <FaArrowRight /></Link>
+                  </div>
+                </article>
               </Col>
             ))}
             {!homeCategories.length && (

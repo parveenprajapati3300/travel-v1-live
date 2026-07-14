@@ -111,7 +111,7 @@ function SearchTour({ placeholder = 'Search by theme, package and destination' }
           aria-label="Search destination or package"
           autoComplete="off"
         />
-        <Button type="submit">Explore</Button>
+        <Button type="submit" className="hero-search-ghost-btn">Explore</Button>
       </Form>
 
       <Modal
