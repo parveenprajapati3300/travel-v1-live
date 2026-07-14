@@ -169,6 +169,10 @@ function Home() {
   const destinationSkeletons = Array.from({ length: 6 }, (_, index) => index)
   const themeSkeletons = Array.from({ length: 6 }, (_, index) => index)
   const packageSkeletons = Array.from({ length: 3 }, (_, index) => index)
+  const groupTripSkeletons = Array.from({ length: 3 }, (_, index) => index)
+  const storySkeletons = Array.from({ length: 3 }, (_, index) => index)
+  const communitySkeletons = Array.from({ length: 4 }, (_, index) => index)
+  const statSkeletons = Array.from({ length: 6 }, (_, index) => index)
   const travelerStoryDestinations = useMemo(() => {
     const sourceDestinations = activeDestinations.length ? activeDestinations : homeDestinations.slice(0, 3)
     return sourceDestinations.slice(0, 3)
@@ -365,7 +369,18 @@ function Home() {
         <Container>
           <SectionHeading eyebrow="Upcoming Group Trips" title="Fixed Departures With Fellow Travelers" text="Join curated group adventures with shared energy, managed stays, transport, and on-trip coordination." />
           <Row className="g-4">
-            {groupTrips.slice(0, 3).map((trip) => (
+            {loading ? groupTripSkeletons.map((slot) => (
+              <Col md={4} key={`group-trip-skeleton-${slot}`}>
+                <article className="group-trip-card group-trip-card-skeleton card-skeleton" aria-busy="true">
+                  <div className="card-skeleton-media group-trip-skeleton-media" />
+                  <div>
+                    <span className="card-skeleton-line card-skeleton-line-xs" />
+                    <h3><span className="card-skeleton-line card-skeleton-line-lg" /></h3>
+                    <span className="card-skeleton-link" />
+                  </div>
+                </article>
+              </Col>
+            )) : groupTrips.length ? groupTrips.slice(0, 3).map((trip) => (
               <Col md={4} key={trip._id || trip.id}>
                 <article className="group-trip-card" data-aos="fade-up">
                   <img src={trip.image} alt={trip.title} />
@@ -376,8 +391,7 @@ function Home() {
                   </div>
                 </article>
               </Col>
-            ))}
-            {!groupTrips.length && (
+            )) : (
               <Col xs={12}>
                 <div className="empty-state-card">
                   <h3>No group trips added yet</h3>
@@ -417,22 +431,34 @@ function Home() {
                   </button>
                 </div>
               )}
-              <div className="why-premium-stats">
-                {[
-                  [<FaUsers />, `${totalPackages}+`, 'Live Packages'],
-                  [<FaTruckPlane />, `${homeDestinations.length}+`, 'Destinations'],
-                  [<FaWandMagicSparkles />, `${homeCategories.length}+`, 'Tour Themes'],
-                  [<FaShieldHeart />, 'In-house', 'Operations'],
-                  [<FaHeadset />, 'Quick', 'Callback Support'],
-                  [<FaPeopleGroup />, `${travelerStories.length}+`, 'Traveler Reviews'],
-                ].map(([icon, value, label]) => (
-                  <div className="why-premium-stat" key={label}>
-                    <span>{icon}</span>
-                    <strong>{value}</strong>
-                    <small>{label}</small>
-                  </div>
-                ))}
-              </div>
+              {loading ? (
+                <div className="why-premium-stats">
+                  {statSkeletons.map((slot) => (
+                    <div className="why-premium-stat stat-skeleton card-skeleton" key={`stat-skeleton-${slot}`} aria-busy="true">
+                      <span className="stat-skeleton-icon" />
+                      <strong className="card-skeleton-line card-skeleton-line-md" />
+                      <small className="card-skeleton-line card-skeleton-line-sm" />
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="why-premium-stats">
+                  {[
+                    [<FaUsers />, `${totalPackages}+`, 'Live Packages'],
+                    [<FaTruckPlane />, `${homeDestinations.length}+`, 'Destinations'],
+                    [<FaWandMagicSparkles />, `${homeCategories.length}+`, 'Tour Themes'],
+                    [<FaShieldHeart />, 'In-house', 'Operations'],
+                    [<FaHeadset />, 'Quick', 'Callback Support'],
+                    [<FaPeopleGroup />, `${travelerStories.length}+`, 'Traveler Reviews'],
+                  ].map(([icon, value, label]) => (
+                    <div className="why-premium-stat" key={label}>
+                      <span>{icon}</span>
+                      <strong>{value}</strong>
+                      <small>{label}</small>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </Container>
@@ -441,7 +467,39 @@ function Home() {
       <section className="section" id="stories">
         <Container>
           <SectionHeading eyebrow="Traveler Stories" title="Reviews And Travel Experiences" />
-          {travelerStorySlides.length ? (
+          {loading ? (
+            <div className="story-review-carousel">
+              <div className="story-review-window">
+                <div className="story-review-track">
+                  {storySkeletons.map((slot) => (
+                    <article className="story-review-card story-review-card-skeleton card-skeleton" data-aos="fade-up" key={`story-skeleton-${slot}`} aria-busy="true">
+                      <div className="story-review-head">
+                        <span className="story-review-avatar card-skeleton-media" />
+                        <div className="story-review-meta">
+                          <strong className="card-skeleton-line card-skeleton-line-lg" />
+                          <span className="card-skeleton-line card-skeleton-line-sm" />
+                        </div>
+                        <span className="story-review-open card-skeleton-link" />
+                      </div>
+                      <p className="story-review-text">
+                        <span className="card-skeleton-line card-skeleton-line-lg" />
+                        <span className="card-skeleton-line card-skeleton-line-md" />
+                        <span className="card-skeleton-line card-skeleton-line-sm" />
+                      </p>
+                      <div className="story-review-destination story-review-destination-skeleton">
+                        <span className="card-skeleton-media" />
+                        <div>
+                          <strong className="card-skeleton-line card-skeleton-line-md" />
+                          <span className="card-skeleton-line card-skeleton-line-xs" />
+                        </div>
+                        <span className="card-skeleton-link" />
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              </div>
+            </div>
+          ) : travelerStorySlides.length ? (
             <div className="story-review-carousel">
               <div className="story-review-window">
                 <div
@@ -522,10 +580,14 @@ function Home() {
             </Col>
             <Col lg={6}>
               <div className="community-photo-grid">
-                {communityImages.map((item) => (
+                {loading ? communitySkeletons.map((slot) => (
+                  <div className="community-photo-skeleton card-skeleton" key={`community-skeleton-${slot}`} aria-busy="true">
+                    <span className="card-skeleton-media" />
+                  </div>
+                )) : communityImages.map((item) => (
                   <img key={item._id || item.name} src={item.image} alt={item.name} />
                 ))}
-                {!communityImages.length && (
+                {!loading && !communityImages.length && (
                   <div className="empty-state-card">
                     <h3>No community images yet</h3>
                     <p>Create destinations from admin to show images here.</p>

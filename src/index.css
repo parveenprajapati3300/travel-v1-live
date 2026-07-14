@@ -5198,6 +5198,10 @@ body.gallery-lightbox-open {
   width: 28%;
 }
 
+.card-skeleton-line-short {
+  width: 48%;
+}
+
 .card-skeleton-link {
   width: 5.6rem;
   height: 1rem;
@@ -5231,6 +5235,97 @@ body.gallery-lightbox-open {
   gap: 1rem;
   padding: 1rem 1.1rem 1.15rem;
   border-top: 1px solid rgba(16, 33, 43, 0.08);
+}
+
+.group-trip-card-skeleton img,
+.group-trip-skeleton-media {
+  height: 230px;
+  border-radius: 8px 8px 0 0;
+}
+
+.group-trip-card-skeleton>div {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.group-trip-card-skeleton h3 {
+  margin: 0;
+}
+
+.group-trip-card-skeleton .card-skeleton-link {
+  width: 7.2rem;
+  height: 2.5rem;
+  border-radius: 8px;
+}
+
+.stat-skeleton {
+  min-height: 7.2rem;
+  padding: 1rem 1rem 1.05rem;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.78);
+}
+
+.stat-skeleton-icon {
+  display: block;
+  width: 3rem;
+  height: 3rem;
+  margin-bottom: 0.35rem;
+  border-radius: 8px;
+  background: linear-gradient(135deg, rgba(196, 208, 221, 0.95), rgba(227, 235, 243, 0.95));
+}
+
+.stat-skeleton strong,
+.stat-skeleton small {
+  height: 1rem;
+}
+
+.stat-skeleton strong {
+  width: 58%;
+}
+
+.stat-skeleton small {
+  width: 72%;
+}
+
+.story-review-card-skeleton .story-review-text {
+  display: grid;
+  gap: 0.55rem;
+  min-height: 6rem;
+  -webkit-line-clamp: unset;
+}
+
+.story-review-card-skeleton .story-review-destination {
+  grid-template-columns: 4.5rem 1fr auto;
+}
+
+.story-review-destination-skeleton {
+  min-height: 5.6rem;
+}
+
+.story-review-destination-skeleton .card-skeleton-media {
+  height: 4rem;
+  border-radius: 8px;
+}
+
+.story-review-destination-skeleton div {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.story-review-destination-skeleton .card-skeleton-link {
+  width: 3.5rem;
+  height: 1.5rem;
+}
+
+.community-photo-skeleton {
+  overflow: hidden;
+  border-radius: 8px;
+  box-shadow: 0 14px 35px rgba(15, 45, 70, 0.13);
+}
+
+.community-photo-skeleton .card-skeleton-media {
+  aspect-ratio: 1 / 0.8;
+  border-radius: 8px;
 }
 
 @keyframes skeleton-shimmer {
