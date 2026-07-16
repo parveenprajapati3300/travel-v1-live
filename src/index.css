@@ -5949,6 +5949,8 @@ body.gallery-lightbox-open {
     border-radius: 50%;
     background: rgba(255, 255, 255, 0.92);
     box-shadow: 0 12px 28px rgba(11, 38, 54, 0.12);
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
   }
 
   .nav-drawer-toggle svg {
@@ -5987,7 +5989,7 @@ body.gallery-lightbox-open {
     transform: translateX(-102%);
     visibility: hidden;
     pointer-events: none;
-    transition: transform 0.28s ease, visibility 0.28s ease;
+    transition: none;
   }
 
   .site-nav .navbar-collapse.show,
@@ -5995,6 +5997,7 @@ body.gallery-lightbox-open {
     transform: translateX(0);
     visibility: visible;
     pointer-events: auto;
+    transition: none;
   }
 
   .nav-drawer-backdrop {
@@ -6005,6 +6008,8 @@ body.gallery-lightbox-open {
     border: 0;
     background: rgba(7, 15, 23, 0.45);
     backdrop-filter: blur(2px);
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
   }
 
   .nav-drawer-header {
@@ -6032,6 +6037,8 @@ body.gallery-lightbox-open {
     height: 2.6rem;
     border-radius: 50%;
     background: rgba(15, 23, 42, 0.06);
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
   }
 
   .nav-more {
@@ -6060,6 +6067,8 @@ body.gallery-lightbox-open {
     color: var(--ink);
     background: #fff;
     box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
   }
 
   .nav-mobile-link-card.active {
@@ -6111,6 +6120,8 @@ body.gallery-lightbox-open {
     font-weight: 800;
     background: linear-gradient(135deg, var(--coral), var(--gold));
     box-shadow: 0 12px 28px rgba(226, 63, 90, 0.24);
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
   }
 
   .nav-mobile-links .nav-link.active,
