@@ -2,7 +2,7 @@ import { Col, Container, Row } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
 import { FaFacebookF, FaInstagram, FaLinkedinIn, FaLocationDot, FaPhone, FaYoutube } from 'react-icons/fa6'
 import { MdEmail } from 'react-icons/md'
-import tntLogo from '../assets/tnt-logo.jpeg'
+import tripsnThrillsLogo from '../assets/tripsnthrills-logo.png'
 
 function Footer() {
   return (
@@ -10,7 +10,7 @@ function Footer() {
       <Container>
         <Row className="g-4">
           <Col lg={4}>
-            <img className="footer-logo" src={tntLogo} alt="TNT Tour and Travels" />
+            <img className="footer-logo" src={tripsnThrillsLogo} alt="TripsNThrills" />
             <p>Custom holiday packages, group trips, family tours, and expert travel support from New Delhi.</p>
             <div className="social-links">
               <a href="https://instagram.com" aria-label="Instagram"><FaInstagram /></a>

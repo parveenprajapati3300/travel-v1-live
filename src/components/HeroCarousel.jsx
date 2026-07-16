@@ -52,6 +52,7 @@
 
 import { Carousel, Container } from 'react-bootstrap'
 import SearchTour from './SearchTour'
+import tripsnThrillsLogo from '../assets/tripsnthrills-logo.png'
 
 const heroSlides = [
   {
@@ -89,7 +90,7 @@ function HeroCarousel() {
                     <p className="hero-banner-subtitle">
                       Affordable Group Tours | Weekend Trips | Customized Holidays
                     </p>
-                    <div className="hero-inline-search mb-5">
+                    <div className="hero-inline-search hero-banner-search mb-5">
                       <SearchTour />
                     </div>
                   </div>

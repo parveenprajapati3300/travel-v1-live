@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 import { Container, Nav, Navbar } from 'react-bootstrap'
 import { NavLink, useLocation } from 'react-router-dom'
-import { FaChevronDown, FaChevronUp, FaMagnifyingGlass, FaPhone, FaRegUser } from 'react-icons/fa6'
-import tntLogo from '../assets/tnt-logo-transparent.png'
+import { FaChevronDown, FaChevronUp, FaPhone, FaRegUser } from 'react-icons/fa6'
+import tripsnThrillsLogo from '../assets/tripsnthrills-logo.png'
 
 const navItems = [
   { label: 'Home', to: '/' },
@@ -41,7 +41,7 @@ function AppNavbar() {
     <Navbar expand="lg" fixed="top" className={`site-nav ${isHomeTop ? 'is-home-top' : 'is-scrolled'}`}>
       <Container fluid="xl">
         <Navbar.Brand as={NavLink} to="/" className="brand-mark">
-          <img src={tntLogo} alt="TNT Tour and Travels" />
+          <img src={tripsnThrillsLogo} alt="TripsNThrills" />
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="main-navigation" />
         <Navbar.Collapse id="main-navigation">

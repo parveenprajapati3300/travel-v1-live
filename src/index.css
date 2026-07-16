@@ -93,10 +93,10 @@ p {
 }
 
 .brand-mark img {
-  width: 138px;
-  height: 42px;
+  width: 168px;
+  height: 48px;
   object-fit: contain;
-  border-radius: 8px;
+  border-radius: 0;
   background: transparent;
 }
 
@@ -790,16 +790,27 @@ p {
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 0.7rem;
   margin-left: 0;
   text-align: center;
   max-width: min(980px, 100%);
 }
 
 .hero-banner-subtitle {
-     color: #000;
-    font-size: 20px;
-    font-weight: 600;
-    line-height: 26px;
+  max-width: 52rem;
+  margin: 0;
+  color: rgba(17, 24, 39, 0.82);
+  font-size: clamp(0.95rem, 1.5vw, 1.15rem);
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  line-height: 1.5;
+}
+
+.hero-banner-logo {
+  width: min(320px, 78vw);
+  height: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 10px 28px rgba(0, 0, 0, 0.28));
 }
 
 .hero-theme-badge {
@@ -1472,9 +1483,9 @@ p {
   padding: 0.32rem 0.32rem 0.32rem 0.95rem;
   border: 1px solid rgba(255, 255, 255, 0.55);
   border-radius: 10px;
-  background: rgba(18, 37, 69, 0.64);
-  box-shadow: 0 22px 54px rgba(7, 28, 39, 0.24);
-  backdrop-filter: blur(18px);
+  background: rgba(255, 255, 255, 0.04);
+  box-shadow: none;
+  backdrop-filter: blur(8px);
 }
 
 .hero-destination-search.has-suggestions {
@@ -1515,9 +1526,24 @@ p {
   color: #fff;
   font-size: 0.92rem;
   font-weight: 800;
-  background: rgba(255, 255, 255, 0.1);
+  background: transparent;
   border-left: 1px solid rgba(255, 255, 255, 0.18);
   box-shadow: none;
+}
+
+.hero-banner-search .hero-destination-search {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+.hero-banner-search .hero-destination-search .btn {
+  background: transparent;
+}
+
+.hero-banner-search .hero-destination-search .form-control {
+  background: transparent;
 }
 
 .hero-search-ghost-btn {
@@ -1708,10 +1734,10 @@ p {
   min-height: 4.15rem;
   padding: 0.36rem 0.36rem 0.36rem 0.95rem;
   border-radius: 10px;
-  background: rgba(18, 37, 69, 0.64);
-  border: 1px solid rgba(255, 255, 255, 0.55);
-  box-shadow: 0 22px 54px rgba(7, 28, 39, 0.24);
-  backdrop-filter: blur(18px);
+  background: transparent;
+  border: 0px solid rgba(11, 237, 83, 0.55);
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px, rgb(13, 225, 59) 0px 0px 0px 3px;
+  backdrop-filter: blur(0);
 }
 
 .hero-inline-search .hero-destination-search>svg {
@@ -5655,8 +5681,8 @@ body.gallery-lightbox-open {
   width: 210px;
   height: 94px;
   object-fit: contain;
-  border-radius: 8px;
-  background: #fff;
+  border-radius: 0;
+  background: transparent;
   margin-bottom: 1rem;
 }
 
