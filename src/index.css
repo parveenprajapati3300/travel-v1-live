@@ -1630,18 +1630,79 @@ p {
 }
 
 .hero-banner-search .hero-destination-search {
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.65);
-  box-shadow: none;
-  backdrop-filter: none;
+  width: min(100%, 980px);
+  margin: 0 auto;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 0.7rem;
+  min-height: 4.75rem;
+  padding: 0.42rem 0.42rem 0.42rem 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: 18px;
+  background: rgba(8, 18, 33, 0.18);
+  box-shadow: 0 22px 54px rgba(8, 18, 33, 0.22);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+.hero-banner-search .hero-destination-search:focus-within {
+  border-color: rgba(255, 255, 255, 0.42);
+  box-shadow: 0 26px 60px rgba(8, 18, 33, 0.28);
 }
 
 .hero-banner-search .hero-destination-search .btn {
+  min-width: 8.6rem;
+  border-radius: 14px;
+  background: linear-gradient(135deg, var(--blue), var(--teal));
+}
+
+.hero-banner-search .hero-search-text-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  padding: 0 0.7rem;
+  border: 0;
+  color: var(--coral);
+  font-size: 0.95rem;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  text-decoration: none;
   background: transparent;
+  box-shadow: none;
+}
+
+.hero-banner-search .hero-search-text-btn:hover,
+.hero-banner-search .hero-search-text-btn:focus,
+.hero-banner-search .hero-search-text-btn:active {
+  color: #ff9c52;
+  background: transparent;
+  box-shadow: none;
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
 }
 
 .hero-banner-search .hero-destination-search .form-control {
+  min-height: 3.6rem;
+  color: #fff;
+  font-size: 1rem;
   background: transparent;
+}
+
+.hero-banner-search .hero-destination-search .form-control::placeholder {
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.hero-banner-search .hero-destination-search > svg {
+  font-size: 1.15rem;
+  color: #fff;
+}
+
+.hero-banner-search .search-suggestion-list {
+  max-width: 980px;
+  margin: 0.45rem auto 0;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 18px 40px rgba(8, 18, 33, 0.16);
 }
 
 .hero-search-ghost-btn {
@@ -1826,7 +1887,7 @@ p {
   background: #f4f8fb;
 }
 
-.hero-inline-search .hero-destination-search {
+.hero-inline-search:not(.hero-banner-search) .hero-destination-search {
   grid-template-columns: auto minmax(0, 1fr) auto;
   gap: 0.7rem;
   min-height: 4.15rem;
@@ -6731,7 +6792,7 @@ body.gallery-lightbox-open {
     font-size: 0.86rem;
   }
 
-  .hero-inline-search .hero-destination-search {
+  .hero-inline-search:not(.hero-banner-search) .hero-destination-search {
     grid-template-columns: auto minmax(0, 1fr) auto;
     gap: 0.35rem;
     min-height: 4.1rem;
@@ -6739,26 +6800,54 @@ body.gallery-lightbox-open {
     border-radius: 10px;
   }
 
-  .hero-inline-search .hero-destination-search>svg {
+  .hero-inline-search:not(.hero-banner-search) .hero-destination-search>svg {
     display: block;
     margin-left: 0;
     font-size: 1.08rem;
   }
 
-  .hero-inline-search .hero-destination-search .form-control {
+  .hero-inline-search:not(.hero-banner-search) .hero-destination-search .form-control {
     min-height: 3rem;
     padding-inline: 0.1rem;
     color: #fff;
     font-size: 0.92rem;
   }
 
-  .hero-inline-search .hero-destination-search .btn {
+  .hero-inline-search:not(.hero-banner-search) .hero-destination-search .btn {
     grid-column: auto;
     width: auto;
     min-width: 7.8rem;
     min-height: 3rem;
     font-size: 0.86rem;
     background: linear-gradient(135deg, var(--blue), var(--teal));
+  }
+
+  .hero-banner-search .hero-destination-search {
+    min-height: 4.25rem;
+    gap: 0.5rem;
+    padding: 0.34rem 0.34rem 0.34rem 0.82rem;
+    border-radius: 16px;
+  }
+
+  .hero-banner-search .hero-destination-search .form-control {
+    min-height: 3rem;
+    font-size: 0.92rem;
+  }
+
+  .hero-banner-search .hero-destination-search .btn {
+    min-width: 6.9rem;
+    min-height: 3rem;
+    font-size: 0.84rem;
+  }
+
+  .hero-banner-search .hero-search-text-btn {
+    font-size: 0.88rem;
+    padding-inline: 0.6rem;
+  }
+
+  .hero-banner-search .search-suggestion-list {
+    max-width: 100%;
+    margin-top: 0.35rem;
   }
 
   .hero-stats span {
