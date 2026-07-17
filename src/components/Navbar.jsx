@@ -35,8 +35,19 @@ const navItems = [
   { label: 'Plan My Trip', to: '/inquiry', className: 'nav-cta' },
 ]
 
-const visibleNavItems = navItems.slice(0, 5)
-const moreNavItems = navItems.slice(5)
+const packageNavItems = navItems.filter((item) =>
+  [
+    '/domestic',
+    '/international',
+    '/group-trips',
+    '/weekend-getaways',
+    '/destinations',
+    '/customized-tours',
+  ].includes(item.to),
+)
+const desktopNavItems = navItems.filter((item) =>
+  ['/', '/community', '/blogs', '/about', '/contact'].includes(item.to),
+)
 const mobileNavItems = navItems.filter((item) => item.className !== 'nav-cta')
 const mobileIcons = {
   Home: FaHouse,
@@ -54,11 +65,11 @@ const mobileIcons = {
 
 function AppNavbar() {
   const [scrolled, setScrolled] = useState(false)
-  const [moreOpen, setMoreOpen] = useState(false)
+  const [packagesOpen, setPackagesOpen] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const location = useLocation()
   const isHomeTop = location.pathname === '/' && !scrolled
-  const isMoreActive = moreNavItems.some((item) => item.to === location.pathname)
+  const isPackagesActive = packageNavItems.some((item) => item.to === location.pathname)
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20)
@@ -82,53 +93,51 @@ function AppNavbar() {
           onClick={() =>
             setMenuOpen((current) => {
               const next = !current
-              if (!next) setMoreOpen(false)
+              if (!next) setPackagesOpen(false)
               return next
             })
           }
         >
           {menuOpen ? <FaXmark /> : <FaBars />}
         </button>
-        {menuOpen && <button type="button" className="nav-drawer-backdrop" aria-label="Close menu overlay" onClick={() => { setMenuOpen(false); setMoreOpen(false) }} />}
+        {menuOpen && <button type="button" className="nav-drawer-backdrop" aria-label="Close menu overlay" onClick={() => { setMenuOpen(false); setPackagesOpen(false) }} />}
         <Navbar.Collapse id="main-navigation">
           <div className="nav-drawer-header">
             <img src={tripsnThrillsLogo} alt="TripsNThrills" className="nav-drawer-logo" />
-            <button type="button" className="nav-drawer-close" aria-label="Close menu" onClick={() => { setMenuOpen(false); setMoreOpen(false) }}>
+            <button type="button" className="nav-drawer-close" aria-label="Close menu" onClick={() => { setMenuOpen(false); setPackagesOpen(false) }}>
               <FaXmark />
             </button>
           </div>
-          <Nav className="align-items-lg-center gap-lg-1">
+          <Nav className="header-nav align-items-lg-center gap-lg-1">
             <div className="nav-desktop-links">
-              {visibleNavItems.map((item) => (
-                <Nav.Link key={item.to} as={NavLink} to={item.to} onClick={() => setMenuOpen(false)}>
-                  {item.label}
-                </Nav.Link>
-              ))}
+              <Nav.Link key="/" as={NavLink} to="/" onClick={() => setMenuOpen(false)}>
+                Home
+              </Nav.Link>
               <div
-                className={`nav-more ${moreOpen ? 'is-open' : ''}`}
+                className={`nav-more ${packagesOpen ? 'is-open' : ''}`}
                 onBlur={(event) => {
                   if (!event.currentTarget.contains(event.relatedTarget)) {
-                    setMoreOpen(false)
+                    setPackagesOpen(false)
                   }
                 }}
               >
                 <button
                   type="button"
-                  className={`nav-more-toggle ${isMoreActive ? 'active' : ''}`}
-                  aria-expanded={moreOpen}
-                  onClick={() => setMoreOpen((current) => !current)}
+                  className={`nav-more-toggle ${isPackagesActive ? 'active' : ''}`}
+                  aria-expanded={packagesOpen}
+                  onClick={() => setPackagesOpen((current) => !current)}
                 >
-                  More {moreOpen ? <FaChevronUp /> : <FaChevronDown />}
+                  Packages {packagesOpen ? <FaChevronUp /> : <FaChevronDown />}
                 </button>
                 <div className="nav-more-menu">
-                  {moreNavItems.map((item) => (
+                  {packageNavItems.map((item) => (
                     <Nav.Link
                       key={item.to}
                       as={NavLink}
                       to={item.to}
                       className={item.className || ''}
                       onClick={() => {
-                        setMoreOpen(false)
+                        setPackagesOpen(false)
                         setMenuOpen(false)
                       }}
                     >
@@ -137,6 +146,36 @@ function AppNavbar() {
                   ))}
                 </div>
               </div>
+              {desktopNavItems
+                .filter((item) => item.to !== '/')
+                .map((item) => (
+                  <Nav.Link
+                    key={item.to}
+                    as={NavLink}
+                    to={item.to}
+                    className={item.className || ''}
+                    onClick={() => {
+                      setPackagesOpen(false)
+                      setMenuOpen(false)
+                    }}
+                  >
+                    {item.label}
+                  </Nav.Link>
+                ))}
+              {/*
+                Keep the CTA visible on desktop as a direct action.
+              */}
+              <Nav.Link
+                as={NavLink}
+                to="/inquiry"
+                className="nav-cta"
+                onClick={() => {
+                  setPackagesOpen(false)
+                  setMenuOpen(false)
+                }}
+              >
+                Plan My Trip
+              </Nav.Link>
             </div>
             <div className="nav-mobile-links">
               {mobileNavItems.map((item) => {
@@ -148,7 +187,7 @@ function AppNavbar() {
                     to={item.to}
                     className="nav-mobile-link-card"
                     onClick={() => {
-                      setMoreOpen(false)
+                      setPackagesOpen(false)
                       setMenuOpen(false)
                     }}
                   >
@@ -166,7 +205,7 @@ function AppNavbar() {
                 to="/inquiry"
                 className="nav-mobile-cta-btn"
                 onClick={() => {
-                  setMoreOpen(false)
+                  setPackagesOpen(false)
                   setMenuOpen(false)
                 }}
               >
