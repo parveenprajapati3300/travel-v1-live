@@ -104,9 +104,6 @@ function AppNavbar() {
         <Navbar.Collapse id="main-navigation">
           <div className="nav-drawer-header">
             <img src={tripsnThrillsLogo} alt="TripsNThrills" className="nav-drawer-logo" />
-            <button type="button" className="nav-drawer-close" aria-label="Close menu" onClick={() => { setMenuOpen(false); setPackagesOpen(false) }}>
-              <FaXmark />
-            </button>
           </div>
           <Nav className="header-nav align-items-lg-center gap-lg-1">
             <div className="nav-desktop-links">
