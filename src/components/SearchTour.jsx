@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Button, Form, Modal } from 'react-bootstrap'
 import { useNavigate } from 'react-router-dom'
-import { FaMagnifyingGlass, FaXmark } from 'react-icons/fa6'
+import { FaArrowRight, FaMagnifyingGlass, FaXmark } from 'react-icons/fa6'
 import { getSearchSuggestions } from '../services/api'
 
 const typeLabels = {
@@ -10,7 +10,7 @@ const typeLabels = {
   theme: 'Theme',
 }
 
-function SearchTour({ placeholder = 'Search by theme, package and destination' }) {
+function SearchTour({ placeholder = 'Search by theme, package and destination', triggerLabel = 'Explore Destinations', triggerClassName = '' }) {
   const navigate = useNavigate()
   const searchInputRef = useRef(null)
   const reopenBlockedUntilRef = useRef(0)
@@ -100,19 +100,15 @@ function SearchTour({ placeholder = 'Search by theme, package and destination' }
 
   return (
     <>
-      <Form className="hero-destination-search" onSubmit={openSearchPanel} data-aos="fade-up">
-        <FaMagnifyingGlass />
-        <Form.Control
-          value={query}
-          onChange={(event) => setQuery(event.target.value)}
-          onFocus={openSearchPanel}
-          onClick={openSearchPanel}
-          placeholder={placeholder}
-          aria-label="Search destination or package"
-          autoComplete="off"
-        />
-        <button type="submit" className="hero-search-text-btn">Explore</button>
-      </Form>
+      <button type="button" className={`hero-search-trigger ${triggerClassName}`.trim()} onClick={openSearchPanel} data-aos="fade-up">
+        <span className="hero-search-trigger-icon">
+          <FaMagnifyingGlass />
+        </span>
+        <span className="hero-search-trigger-text">{triggerLabel}</span>
+        <span className="hero-search-trigger-arrow" aria-hidden="true">
+          <FaArrowRight />
+        </span>
+      </button>
 
       <Modal
         show={isOpen}

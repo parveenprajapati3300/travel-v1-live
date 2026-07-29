@@ -162,7 +162,7 @@ function AppNavbar() {
               {/*
                 Keep the CTA visible on desktop as a direct action.
               */}
-              <Nav.Link
+              {/* <Nav.Link
                 as={NavLink}
                 to="/inquiry"
                 className="nav-cta"
@@ -172,7 +172,7 @@ function AppNavbar() {
                 }}
               >
                 Plan My Trip
-              </Nav.Link>
+              </Nav.Link> */}
             </div>
             <div className="nav-mobile-links">
               {mobileNavItems.map((item) => {
@@ -196,7 +196,7 @@ function AppNavbar() {
                 )
               })}
             </div>
-            <div className="nav-mobile-cta">
+            {/* <div className="nav-mobile-cta">
               <Nav.Link
                 as={NavLink}
                 to="/inquiry"
@@ -208,12 +208,11 @@ function AppNavbar() {
               >
                 Plan My Trip
               </Nav.Link>
-            </div>
+            </div> */}
             <div className="nav-actions">
               <a className="nav-call" href="tel:+919797972175" aria-label="Call TNT Tour and Travels">
                 <FaPhone />
                 <span>
-                  <small>Call Us</small>
                   +91 000000000
                 </span>
               </a>

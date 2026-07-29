@@ -52,26 +52,32 @@
 
 import { Carousel, Container } from 'react-bootstrap'
 import SearchTour from './SearchTour'
-import tripsnThrillsLogo from '../assets/tripsnthrills-logo.png'
 
 const heroSlides = [
   {
-    image: new URL('../assets/travel/banner/banner-01.jpg', import.meta.url).href,
-    title: 'Explore the World with TripsNThrills',
+    image: new URL('../assets/travel/banner/banner-ladakh.jpg', import.meta.url).href,
+    title: 'Ladakh',
   },
   {
-    image: new URL('../assets/travel/banner/banner-03.jpg', import.meta.url).href,
-    title: 'Explore the World with TripsNThrills',
+    image: new URL('../assets/travel/banner/banner-goa.jpg', import.meta.url).href,
+    title: 'Goa',
   },
   {
-    image: new URL('../assets/travel/banner/banner-06.jpg', import.meta.url).href,
-    title: 'Explore the World with TripsNThrills',
+    image: new URL('../assets/travel/banner/banner-kashmir.jpg', import.meta.url).href,
+    title: 'Kashmir',
   },
   {
-    image: new URL('../assets/travel/banner/banner-07.jpg', import.meta.url).href,
-    title: 'Explore the World with TripsNThrills',
+    image: new URL('../assets/travel/banner/banner-kerala.jpg', import.meta.url).href,
+    title: 'Kerala',
+  },
+  {
+    image: new URL('../assets/travel/banner/banner-dubai.jpg', import.meta.url).href,
+    title: 'Dubai',
   },
 ]
+
+const heroHeading = 'Explore the World with TripsNThrills'
+const heroSubtitle = 'Affordable Group Tours • Weekend Trips • Customized Holidays'
 
 function HeroCarousel() {
   return (
@@ -84,15 +90,13 @@ function HeroCarousel() {
               <Container>
                 <div className="hero-wravel-content hero-carousel-content" data-aos="zoom-in">
                   <div className="hero-wravel-copy">
-                    <h1 className="hero-wravel-title" aria-label={slide.title}>
-                      <span>{slide.title}</span>
+                    <h1 className="hero-wravel-title" aria-label={heroHeading}>
+                      <span>{heroHeading}</span>
                     </h1>
                     <p className="hero-banner-subtitle">
-                      Affordable Group Tours | Weekend Trips | Customized Holidays
+                      {heroSubtitle}
                     </p>
-                    <div className="hero-inline-search hero-banner-search mb-5">
-                      <SearchTour />
-                    </div>
+                    <SearchTour triggerLabel="Explore Destinations" triggerClassName="hero-banner-cta" />
                   </div>
                 </div>
               </Container>
