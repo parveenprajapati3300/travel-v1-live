@@ -1,6 +1,9 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Button, Col, Container, Row } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
+import { Autoplay } from 'swiper/modules'
+import { Swiper, SwiperSlide } from 'swiper/react'
+import 'swiper/css'
 import {
   FaCalendarDays,
   FaArrowRight,
@@ -15,7 +18,6 @@ import {
   FaGoogle,
 } from 'react-icons/fa6'
 import HeroCarousel from '../components/HeroCarousel'
-import PackageCard from '../components/PackageCard'
 import SectionHeading from '../components/SectionHeading'
 import recognition1 from '../assets/recognitions/recognition-1.png'
 import recognition2 from '../assets/recognitions/recognition-2.png'
@@ -76,6 +78,17 @@ const whyTravelImages = [
   new URL('../assets/travel/gallery/gallery-1507525428034-w900-80.jpg', import.meta.url).href,
 ]
 
+const tripRowBanners = {
+  hot: new URL('../assets/travel/banner/banner-ladakh.jpg', import.meta.url).href,
+  domestic: new URL('../assets/travel/banner/banner-kashmir.jpg', import.meta.url).href,
+  international: new URL('../assets/travel/banner/banner-dubai.jpg', import.meta.url).href,
+  honeymoon: new URL('../assets/travel/packages/packages-1537996194471-w1400-80.jpg', import.meta.url).href,
+  weekend: new URL('../assets/travel/banner/banner-goa.jpg', import.meta.url).href,
+  hill: new URL('../assets/travel/banner/banner-kerala.jpg', import.meta.url).href,
+  adventure: new URL('../assets/travel/packages/packages-1581793745862-w1400-80.jpg', import.meta.url).href,
+  backpacking: new URL('../assets/travel/styles/styles-1507525428034-w1600-80.jpg', import.meta.url).href,
+}
+
 const recognitionItems = [
   { name: 'Startup India', image: recognition1 },
   { name: 'MSME', image: recognition2 },
@@ -121,22 +134,51 @@ function Home() {
   const [homeDestinations, setHomeDestinations] = useState([])
   const [homeCategories, setHomeCategories] = useState([])
   const [groupTrips, setGroupTrips] = useState([])
+  const [honeymoonTrips, setHoneymoonTrips] = useState([])
+  const [weekendTrips, setWeekendTrips] = useState([])
+  const [hillTrips, setHillTrips] = useState([])
+  const [adventureTrips, setAdventureTrips] = useState([])
+  const [soloTrips, setSoloTrips] = useState([])
   const [loading, setLoading] = useState(true)
-  const [activeDestinationTab, setActiveDestinationTab] = useState('domestic')
-  const [activePackageTab, setActivePackageTab] = useState('domestic')
   const [activeStoryIndex, setActiveStoryIndex] = useState(0)
   const [storyTransition, setStoryTransition] = useState(true)
   const [showWhyMore, setShowWhyMore] = useState(false)
 
   useEffect(() => {
-    setLoading(true)
-    Promise.all([getPackages('domestic'), getPackages('international'), getDestinations(), getCategories(), getPackagesByCategory('Group Tour')])
-      .then(([domesticResponse, internationalResponse, destinationResponse, categoryResponse, groupResponse]) => {
+    Promise.all([
+      getPackages('domestic'),
+      getPackages('international'),
+      getDestinations(),
+      getCategories(),
+      getPackagesByCategory('Group Tour'),
+      getPackagesByCategory('Honeymoon Tour'),
+      getPackagesByCategory('Weekend Tour'),
+      getPackagesByCategory('Hill Station Tour'),
+      getPackagesByCategory('Adventure Tour'),
+      getPackagesByCategory('Solo Trip'),
+    ])
+      .then(([
+        domesticResponse,
+        internationalResponse,
+        destinationResponse,
+        categoryResponse,
+        groupResponse,
+        honeymoonResponse,
+        weekendResponse,
+        hillResponse,
+        adventureResponse,
+        soloResponse,
+      ]) => {
         setHomeDomesticPackages(domesticResponse.data)
         setHomeInternationalPackages(internationalResponse.data)
         setHomeDestinations(destinationResponse.data)
         setHomeCategories(categoryResponse.data)
         setGroupTrips(groupResponse.data)
+        setHoneymoonTrips(honeymoonResponse.data)
+        setWeekendTrips(weekendResponse.data)
+        setHillTrips(hillResponse.data)
+        setAdventureTrips(adventureResponse.data)
+        setSoloTrips(soloResponse.data)
       })
       .catch(() => {
         setHomeDomesticPackages([])
@@ -144,6 +186,11 @@ function Home() {
         setHomeDestinations([])
         setHomeCategories([])
         setGroupTrips([])
+        setHoneymoonTrips([])
+        setWeekendTrips([])
+        setHillTrips([])
+        setAdventureTrips([])
+        setSoloTrips([])
       })
       .finally(() => {
         setLoading(false)
@@ -159,24 +206,21 @@ function Home() {
     return () => window.clearInterval(timer)
   }, [])
 
-  const activePackages = activePackageTab === 'domestic' ? homeDomesticPackages : homeInternationalPackages
-  const activeRoute = activePackageTab === 'domestic' ? '/domestic' : '/international'
-  const activeViewLabel = activePackageTab === 'domestic' ? 'Domestic' : 'International'
-  const activeDestinations = homeDestinations
-    .filter((destination) => (destination.type || 'domestic').toLowerCase() === activeDestinationTab)
-    .slice(0, 6)
+  const domesticDestinations = homeDestinations
+    .filter((destination) => (destination.type || 'domestic').toLowerCase() === 'domestic')
+  const internationalDestinations = homeDestinations
+    .filter((destination) => (destination.type || 'domestic').toLowerCase() === 'international')
   const communityImages = homeDestinations.slice(0, 4)
-  const destinationSkeletons = Array.from({ length: 6 }, (_, index) => index)
+  const tripCardSkeletons = Array.from({ length: 5 }, (_, index) => index)
   const themeSkeletons = Array.from({ length: 6 }, (_, index) => index)
-  const packageSkeletons = Array.from({ length: 3 }, (_, index) => index)
   const groupTripSkeletons = Array.from({ length: 3 }, (_, index) => index)
   const storySkeletons = Array.from({ length: 3 }, (_, index) => index)
   const communitySkeletons = Array.from({ length: 4 }, (_, index) => index)
   const statSkeletons = Array.from({ length: 6 }, (_, index) => index)
   const travelerStoryDestinations = useMemo(() => {
-    const sourceDestinations = activeDestinations.length ? activeDestinations : homeDestinations.slice(0, 3)
+    const sourceDestinations = domesticDestinations.length ? domesticDestinations : homeDestinations.slice(0, 3)
     return sourceDestinations.slice(0, 3)
-  }, [activeDestinations, homeDestinations])
+  }, [domesticDestinations, homeDestinations])
   const travelerStorySlides = useMemo(() => {
     const slides = travelerStories.map((story, index) => ({
       ...story,
@@ -185,6 +229,65 @@ function Home() {
     return slides.concat(slides.slice(0, 3))
   }, [travelerStoryDestinations])
   const totalPackages = homeDomesticPackages.length + homeInternationalPackages.length
+  const allPackages = [...homeDomesticPackages, ...homeInternationalPackages]
+  const destinationSections = [
+    {
+      title: 'Domestic Destinations',
+      route: '/destinations?type=domestic',
+      banner: tripRowBanners.hill,
+      items: domesticDestinations,
+    },
+    {
+      title: 'International Destinations',
+      route: '/destinations?type=international',
+      banner: tripRowBanners.international,
+      items: internationalDestinations,
+    },
+  ]
+  const packageSections = [
+    {
+      title: 'Hot Selling Trips',
+      route: '/domestic',
+      banner: tripRowBanners.hot,
+      items: allPackages,
+    },
+    {
+      title: 'Domestic Trips',
+      route: '/domestic',
+      banner: tripRowBanners.domestic,
+      items: homeDomesticPackages,
+    },
+    {
+      title: 'International Trips',
+      route: '/international',
+      banner: tripRowBanners.international,
+      items: homeInternationalPackages,
+    },
+    {
+      title: 'Honeymoon Trips',
+      route: '/category/honeymoon-tour',
+      banner: tripRowBanners.honeymoon,
+      items: honeymoonTrips.length ? honeymoonTrips : homeInternationalPackages,
+    },
+    {
+      title: 'Weekend Trips',
+      route: '/weekend-getaways',
+      banner: tripRowBanners.weekend,
+      items: weekendTrips.length ? weekendTrips : homeDomesticPackages,
+    },
+    {
+      title: 'Himalayan Treks',
+      route: '/category/adventure-tour',
+      banner: tripRowBanners.adventure,
+      items: adventureTrips.length ? adventureTrips : hillTrips.length ? hillTrips : groupTrips.length ? groupTrips : homeDomesticPackages,
+    },
+    {
+      title: 'Backpacking Trips',
+      route: '/category/solo-trip',
+      banner: tripRowBanners.backpacking,
+      items: soloTrips.length ? soloTrips : groupTrips.length ? groupTrips : allPackages,
+    },
+  ]
   const handleStoryTransitionEnd = () => {
     if (activeStoryIndex >= travelerStories.length) {
       setStoryTransition(false)
@@ -194,6 +297,71 @@ function Home() {
       })
     }
   }
+  const renderTripRow = ({ title, route, banner, items }, itemType = 'package') => (
+    <section className="home-trip-row" key={title} data-aos="fade-up">
+      <div className="home-trip-banner">
+        <img src={banner} alt="" />
+        <div className="home-trip-banner-copy">
+          <h3>{title}</h3>
+          <p>A Journey Through Time, Colour And Culture</p>
+          <Link className="home-trip-explore" to={route}>Explore</Link>
+        </div>
+      </div>
+      {loading ? (
+        <div className="home-trip-card-rail">
+          {tripCardSkeletons.map((slot) => (
+            <article className="home-trip-mini-card card-skeleton" key={`${title}-skeleton-${slot}`} aria-busy="true">
+              <span className="card-skeleton-media" />
+              <span className="card-skeleton-line card-skeleton-line-lg" />
+              <span className="card-skeleton-line card-skeleton-line-sm" />
+            </article>
+          ))}
+        </div>
+      ) : items.length ? (
+        <Swiper
+          className="home-trip-card-rail home-trip-swiper"
+          modules={[Autoplay]}
+          slidesPerView={4}
+          slidesPerGroup={1}
+          spaceBetween={20}
+          loop={items.length > 5}
+          speed={850}
+          autoplay={{ delay: 1900, disableOnInteraction: false, pauseOnMouseEnter: true }}
+          grabCursor
+          breakpoints={{
+            0: { slidesPerView: 1.2, spaceBetween: 14 },
+            576: { slidesPerView: 2, spaceBetween: 16 },
+            768: { slidesPerView: 3, spaceBetween: 18 },
+            992: { slidesPerView: 4, spaceBetween: 20 },
+          }}
+        >
+          {items.map((item) => {
+            const link = itemType === 'destination' ? `/destination/${slugify(item.name)}` : `/package/${item.id}`
+            const name = itemType === 'destination' ? item.name : item.packageDestination || item.location?.split(',')[0] || item.title
+            const priceText = itemType === 'destination' ? 'Cost As Per Requirement' : `Starting Price @ Rs ${item.price.toLocaleString('en-IN')}`
+
+            return (
+              <SwiperSlide className="home-trip-slide" key={item._id || item.id || item.name}>
+                <Link className="home-trip-mini-card" to={link}>
+                  <img src={item.image} alt={name} />
+                  <strong>{name}</strong>
+                  <small>{priceText}</small>
+                </Link>
+              </SwiperSlide>
+            )
+          })}
+        </Swiper>
+      ) : (
+        <div className="home-trip-card-rail">
+          <div className="empty-state-card home-trip-empty">
+            <h3>No trips added yet</h3>
+            <p>Add matching items from admin to show this section.</p>
+          </div>
+        </div>
+      )}
+      <Link className="home-trip-view-all" to={route}>View All <FaArrowRight /></Link>
+    </section>
+  )
 
   return (
     <>
@@ -220,57 +388,11 @@ function Home() {
         </Container>
       </section>
 
-      <section className="section">
+      <section className="section home-trip-showcase">
         <Container>
-          <div className="destination-tabs-shell">
-            <div className="section-title-row">
-              <SectionHeading title="Popular Destinations" text="Indulge in unforgettable adventures with special tour plans." />
-              <Button as={Link} to={`/destinations?type=${activeDestinationTab}`} variant="outline-dark">
-                View More
-              </Button>
-            </div>
-            <div className="package-tabs" role="tablist" aria-label="Destination categories">
-              <button className={activeDestinationTab === 'domestic' ? 'active' : ''} type="button" onClick={() => setActiveDestinationTab('domestic')}>
-                Domestic
-              </button>
-              <button className={activeDestinationTab === 'international' ? 'active' : ''} type="button" onClick={() => setActiveDestinationTab('international')}>
-                International
-              </button>
-            </div>
-            <Row className="g-4">
-              {loading ? destinationSkeletons.map((slot) => (
-                <Col xs={12} sm={6} lg={4} key={`destination-skeleton-${slot}`}>
-                  <article className="destination-standard-card card-skeleton destination-card-skeleton" aria-busy="true">
-                    <div className="destination-image-link card-skeleton-media" />
-                    <div>
-                      <span className="card-skeleton-line card-skeleton-line-lg" />
-                      <span className="card-skeleton-line card-skeleton-line-sm" />
-                      <span className="card-skeleton-link" />
-                    </div>
-                  </article>
-                </Col>
-              )) : activeDestinations.length ? activeDestinations.map((destination) => (
-                <Col xs={12} sm={6} lg={4} key={destination.name}>
-                  <article className="destination-standard-card" data-aos="fade-up">
-                    <Link className="destination-image-link" to={`/destination/${slugify(destination.name)}`} aria-label={`Explore ${destination.name}`}>
-                      <img src={destination.image} alt={destination.name} />
-                    </Link>
-                    <div>
-                      <h3>{destination.name}</h3>
-                      <p><span>From</span> Rs {destination.price.toLocaleString('en-IN')}</p>
-                      <Link to={`/destination/${slugify(destination.name)}`}>Explore <FaArrowRight /></Link>
-                    </div>
-                  </article>
-                </Col>
-              )) : (
-                <Col xs={12}>
-                  <div className="empty-state-card">
-                    <h3>No destinations added yet</h3>
-                    <p>Create {activeDestinationTab} destinations from admin to show them here.</p>
-                  </div>
-                </Col>
-              )}
-            </Row>
+          <SectionHeading title="Popular Destinations" text="Explore domestic and international places in separate rows." />
+          <div className="home-trip-stack">
+            {destinationSections.map((section) => renderTripRow(section, 'destination'))}
           </div>
         </Container>
       </section>
@@ -317,50 +439,11 @@ function Home() {
         </Container>
       </section>
 
-      <section className="section">
+      <section className="section home-trip-showcase">
         <Container>
-          <div className="package-tabs-shell">
-            <div className="section-title-row">
-              <SectionHeading eyebrow="Packages" title="Choose Domestic Or International Trips" text="Switch tabs to see curated packages by category, then open the full list from the matching page." />
-              <Button as={Link} to={activeRoute} variant="outline-dark">View All {activeViewLabel}</Button>
-            </div>
-            <div className="package-tabs" role="tablist" aria-label="Package categories">
-              <button className={activePackageTab === 'domestic' ? 'active' : ''} type="button" onClick={() => setActivePackageTab('domestic')}>
-                Domestic Packages
-              </button>
-              <button className={activePackageTab === 'international' ? 'active' : ''} type="button" onClick={() => setActivePackageTab('international')}>
-                International Packages
-              </button>
-            </div>
-            <Row className="g-4">
-              {loading ? packageSkeletons.map((slot) => (
-                <Col md={6} lg={4} key={`package-skeleton-${slot}`}>
-                  <article className="package-card h-100 package-card-skeleton card-skeleton" aria-busy="true">
-                    <div className="card-image-wrap card-skeleton-media" />
-                    <div className="package-card-skeleton-body">
-                      <div className="card-skeleton-line card-skeleton-line-xs" />
-                      <div className="card-skeleton-line card-skeleton-line-lg" />
-                      <div className="card-skeleton-line card-skeleton-line-md" />
-                      <div className="card-skeleton-line card-skeleton-line-md" />
-                      <div className="card-skeleton-line card-skeleton-line-lg card-skeleton-line-short" />
-                    </div>
-                    <div className="package-card-skeleton-footer">
-                      <div className="card-skeleton-line card-skeleton-line-sm" />
-                      <div className="card-skeleton-link" />
-                    </div>
-                  </article>
-                </Col>
-              )) : activePackages.length ? activePackages.slice(0, 3).map((item) => (
-                <Col md={6} lg={4} key={item._id || item.id}><PackageCard item={item} /></Col>
-              )) : (
-                <Col xs={12}>
-                  <div className="empty-state-card">
-                    <h3>No {activeViewLabel.toLowerCase()} packages added yet</h3>
-                    <p>Create packages from admin to show them here.</p>
-                  </div>
-                </Col>
-              )}
-            </Row>
+          <SectionHeading eyebrow="Packages" title="Trips By Collection" text="Curated holiday rows for quick browsing." />
+          <div className="home-trip-stack">
+            {packageSections.map((section) => renderTripRow(section))}
           </div>
         </Container>
       </section>
