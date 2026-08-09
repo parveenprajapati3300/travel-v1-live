@@ -1267,64 +1267,174 @@ p {
 }
 
 .memories-section {
-  background: #fff;
+  overflow: hidden;
+  background: linear-gradient(180deg, #fffaf7 0%, #ffffff 100%);
 }
 
-.memories-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1.25rem;
+.memories-carousel {
+  width: 100%;
+  margin: 0 auto;
+  padding: 2rem 0 3.6rem;
+  overflow: visible;
+}
+
+.memory-slide {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: auto;
 }
 
 .memory-card {
   position: relative;
   overflow: hidden;
-  min-height: 190px;
+  width: 100%;
+  min-height: 210px;
+  aspect-ratio: 1.45 / 1;
+  padding: 0;
+  border: 0;
   border-radius: 8px;
   background: #111820;
-  box-shadow: 0 18px 44px rgba(15, 45, 70, 0.12);
+  box-shadow: 0 18px 44px rgba(15, 45, 70, 0.13);
+  cursor: pointer;
+  transform: translateY(0);
+  transition: transform 0.28s ease, box-shadow 0.28s ease;
 }
 
-.memory-card::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, rgba(5, 18, 28, 0), rgba(5, 18, 28, 0.68));
-  pointer-events: none;
+.memories-carousel .swiper-slide-active .memory-card {
+  box-shadow: 0 22px 52px rgba(15, 45, 70, 0.16);
+}
+
+.memory-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 24px 54px rgba(15, 45, 70, 0.18);
 }
 
 .memory-card video,
 .memory-card img {
+  display: block;
   width: 100%;
   height: 100%;
-  min-height: 190px;
+  min-height: 210px;
   object-fit: cover;
 }
 
-.memory-card div {
-  position: absolute;
-  z-index: 1;
-  left: 1rem;
-  right: 1rem;
-  bottom: 1rem;
-  color: #fff;
-}
-
-.memory-card strong,
-.memory-card span {
+.memory-card video {
   display: block;
+  background: #0b0f14;
 }
 
-.memory-card strong {
-  font-size: 1.05rem;
+.memory-play {
+  position: absolute;
+  inset: 50% auto auto 50%;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 4.5rem;
+  height: 4.5rem;
+  border-radius: 50%;
+  color: #fff;
+  background: #ff1f1f;
+  box-shadow: 0 16px 38px rgba(0, 0, 0, 0.28);
+  transform: translate(-50%, -50%);
+  transition: transform 0.18s ease;
+}
+
+.memory-play svg {
+  margin-left: 0.25rem;
+  font-size: 1.35rem;
+}
+
+.memory-card:hover .memory-play,
+.memory-card:focus-visible .memory-play {
+  transform: translate(-50%, -50%) scale(1.08);
+}
+
+.memory-card:focus-visible {
+  outline: 3px solid rgba(0, 188, 157, 0.55);
+  outline-offset: 4px;
+}
+
+.memory-video-modal {
+  overflow: hidden;
+  border: 0;
+  border-radius: 8px;
+  background: #05090d;
+  box-shadow: 0 28px 85px rgba(0, 0, 0, 0.45);
+}
+
+.memory-video-modal video {
+  display: block;
+  width: 100%;
+  max-height: min(76vh, 620px);
+  background: #05090d;
+}
+
+.memory-modal-close {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 2.4rem;
+  height: 2.4rem;
+  border: 0;
+  border-radius: 50%;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.56);
+}
+
+.memories-carousel .swiper-button-next,
+.memories-carousel .swiper-button-prev {
+  width: 2.55rem;
+  height: 2.55rem;
+  border: 1px solid rgba(255, 255, 255, 0.68);
+  border-radius: 14px;
+  color: #fff;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.04)),
+    linear-gradient(135deg, var(--button-secondary), var(--button-primary));
+  box-shadow: 0 18px 38px var(--button-shadow);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
+}
+
+.memories-carousel .swiper-button-next::after,
+.memories-carousel .swiper-button-prev::after {
+  font-size: 0.88rem;
   font-weight: 900;
 }
 
-.memory-card span {
-  margin-top: 0.25rem;
-  color: rgba(255, 255, 255, 0.8);
-  font-size: 0.84rem;
-  font-weight: 800;
+.memories-carousel .swiper-button-next:hover,
+.memories-carousel .swiper-button-prev:hover {
+  transform: translateY(-2px);
+  filter: saturate(1.08);
+  box-shadow: 0 22px 46px var(--button-shadow);
+}
+
+.memories-carousel .swiper-button-next:focus-visible,
+.memories-carousel .swiper-button-prev:focus-visible {
+  outline: 3px solid rgba(0, 188, 157, 0.35);
+  outline-offset: 3px;
+}
+
+.memories-carousel .swiper-pagination {
+  bottom: 1rem !important;
+}
+
+.memories-carousel .swiper-pagination-bullet {
+  width: 0.42rem;
+  height: 0.42rem;
+  background: var(--button-primary);
+  opacity: 0.35;
+}
+
+.memories-carousel .swiper-pagination-bullet-active {
+  width: 1.45rem;
+  border-radius: 999px;
+  opacity: 1;
 }
 
 /* =========================
@@ -1986,6 +2096,147 @@ p {
   display: flex;
   align-items: center;
   gap: 0.45rem;
+}
+
+.home-blogs-section {
+  background: linear-gradient(180deg, #fffaf7 0%, #f5fbff 100%);
+}
+
+.home-blogs-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  gap: clamp(1.5rem, 3vw, 2.4rem);
+  margin: 0 auto;
+}
+
+.home-blog-list {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.home-blog-list-card,
+.home-blog-feature-card {
+  border: 1px solid rgba(16, 33, 43, 0.07);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 20px 55px rgba(15, 45, 70, 0.1);
+}
+
+.home-blog-list-card {
+  display: grid;
+  grid-template-columns: minmax(150px, 0.78fr) 1fr;
+  gap: 1.1rem;
+  align-items: center;
+  padding: 0.85rem;
+}
+
+.home-blog-list-card img {
+  width: 100%;
+  height: 118px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.home-blog-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+  color: var(--muted);
+  font-size: 0.84rem;
+  font-weight: 800;
+}
+
+.home-blog-list-card h3,
+.home-blog-feature-card h3 {
+  margin: 0.8rem 0 0;
+  color: var(--ink);
+  font-size: 1.05rem;
+  font-weight: 950;
+  line-height: 1.35;
+}
+
+.home-blog-feature-card {
+  padding: 0.9rem;
+}
+
+.home-blog-feature-card img {
+  width: 100%;
+  height: 300px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.home-blog-feature-card .home-blog-meta {
+  margin-top: 1rem;
+}
+
+.home-blog-feature-card h3 {
+  font-size: 1.15rem;
+}
+
+.home-blog-feature-card p {
+  margin: 0.65rem 0 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1.55;
+}
+
+.home-section-action {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.home-faq-section {
+  background: #fffaf6;
+}
+
+.home-faq-accordion {
+  margin: 0 auto;
+  border-top: 1px solid rgba(16, 33, 43, 0.08);
+}
+
+.home-faq-accordion .accordion-item {
+  border: 0;
+  border-bottom: 1px solid rgba(16, 33, 43, 0.08);
+  background: transparent;
+}
+
+.home-faq-accordion .accordion-button {
+  min-height: 5.9rem;
+  padding: 1.25rem 0.35rem;
+  color: var(--ink);
+  background: transparent;
+  box-shadow: none;
+  font-size: 1.03rem;
+  font-weight: 900;
+}
+
+.home-faq-accordion .accordion-button:not(.collapsed) {
+  color: var(--button-primary);
+  background: transparent;
+  box-shadow: none;
+}
+
+.home-faq-accordion .accordion-button:focus {
+  box-shadow: none;
+}
+
+.home-faq-accordion .accordion-body {
+  padding: 0 0.35rem 1.35rem;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.home-faq-more {
+  color: var(--button-primary);
+  font-weight: 900;
+  text-decoration: none;
+}
+
+.home-faq-more:hover {
+  color: var(--button-secondary);
 }
 
 .mini-destination-card {
@@ -5196,6 +5447,14 @@ body.gallery-lightbox-open {
     margin-top: -5.8rem;
   }
 
+  .home-blogs-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .home-blog-feature-card img {
+    height: 260px;
+  }
+
   .why-premium-layout {
     grid-template-columns: 1fr;
   }
@@ -5264,6 +5523,26 @@ body.gallery-lightbox-open {
 
   .admin-stat-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .home-blog-list-card {
+    grid-template-columns: 1fr;
+  }
+
+  .home-blog-list-card img,
+  .home-blog-feature-card img {
+    height: 190px;
+  }
+
+  .home-blog-meta {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .home-faq-accordion .accordion-button {
+    min-height: 4.6rem;
+    font-size: 0.95rem;
   }
 
   .admin-nav button,
@@ -5550,17 +5829,29 @@ body.gallery-lightbox-open {
     scroll-snap-align: start;
   }
 
-  .memories-grid {
-    grid-template-columns: 1fr;
+  .memories-carousel {
+    padding: 1.2rem 1.6rem 3.2rem;
   }
 
   .memory-card {
+    aspect-ratio: 1.35 / 1;
     min-height: 210px;
+    transform: translateY(0);
   }
 
   .memory-card video,
   .memory-card img {
     min-height: 210px;
+  }
+
+  .memories-carousel .swiper-slide-active .memory-card {
+    transform: translateY(0);
+  }
+
+  .memories-carousel .swiper-button-next,
+  .memories-carousel .swiper-button-prev {
+    width: 2.25rem;
+    height: 2.25rem;
   }
 
   .destination-standard-card {

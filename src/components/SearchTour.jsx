@@ -10,7 +10,7 @@ const typeLabels = {
   theme: 'Theme',
 }
 
-function SearchTour({ placeholder = 'Search by theme, package and destination', triggerLabel = 'Explore Destinations', triggerClassName = '', variant = 'modal' }) {
+function SearchTour({ placeholder = 'Search By Theme, Package And Destination', triggerLabel = 'Explore Destinations', triggerClassName = '', variant = 'modal' }) {
   const navigate = useNavigate()
   const searchInputRef = useRef(null)
   const reopenBlockedUntilRef = useRef(0)
@@ -124,7 +124,7 @@ function SearchTour({ placeholder = 'Search by theme, package and destination', 
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           placeholder={placeholder}
-          aria-label="Search by theme, package and destination"
+          aria-label="Search By Theme, Package And Destination"
           autoComplete="off"
         />
         <Button type="submit">Explore</Button>
@@ -163,7 +163,7 @@ function SearchTour({ placeholder = 'Search by theme, package and destination', 
               readOnly
               onFocus={openSearchPanel}
               placeholder={placeholder}
-              aria-label="Search by theme, package and destination"
+              aria-label="Search By Theme, Package And Destination"
               autoComplete="off"
             />
             <Button type="button" className="hero-search-text-btn" onClick={openSearchPanel}>Explore</Button>

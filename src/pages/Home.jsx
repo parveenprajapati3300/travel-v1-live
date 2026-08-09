@@ -1,9 +1,11 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Button, Col, Container, Row } from 'react-bootstrap'
+import { Accordion, Button, Col, Container, Modal, Row } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
-import { Autoplay } from 'swiper/modules'
+import { Autoplay, Navigation, Pagination } from 'swiper/modules'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import 'swiper/css'
+import 'swiper/css/navigation'
+import 'swiper/css/pagination'
 import {
   FaCalendarDays,
   FaArrowRight,
@@ -16,6 +18,8 @@ import {
   FaWandMagicSparkles,
   FaStar,
   FaGoogle,
+  FaPlay,
+  FaXmark,
 } from 'react-icons/fa6'
 import HeroCarousel from '../components/HeroCarousel'
 import SectionHeading from '../components/SectionHeading'
@@ -89,19 +93,48 @@ const tripRowBanners = {
   backpacking: new URL('../assets/travel/styles/styles-1507525428034-w1600-80.jpg', import.meta.url).href,
 }
 
+const tripRowVideos = {
+  hot: new URL('../assets/travel/videos/hot-selling-travel.mp4', import.meta.url).href,
+}
+
+const memoryVideos = {
+  travelers: new URL('../assets/travel/videos/memory-01-travelers.mp4', import.meta.url).href,
+  mountains: new URL('../assets/travel/videos/memory-02-mountains.mp4', import.meta.url).href,
+  roadTrip: new URL('../assets/travel/videos/memory-03-road-trip.mp4', import.meta.url).href,
+  nature: new URL('../assets/travel/videos/memory-04-nature.mp4', import.meta.url).href,
+  adventure: new URL('../assets/travel/videos/memory-05-adventure.mp4', import.meta.url).href,
+}
+
 const memoryMediaItems = [
   {
-    title: 'Trip Video',
+    title: 'Mountain Group Memories',
     type: 'video',
+    video: memoryVideos.travelers,
     poster: new URL('../assets/travel/gallery/gallery-1507525428034-w900-80.jpg', import.meta.url).href,
   },
   {
-    title: 'Memories From The Hills',
-    image: new URL('../assets/travel/gallery/gallery-1528127269322-w900-80.jpg', import.meta.url).href,
+    title: 'Hillside Travel Story',
+    type: 'video',
+    video: memoryVideos.mountains,
+    poster: new URL('../assets/travel/gallery/gallery-1528127269322-w900-80.jpg', import.meta.url).href,
   },
   {
-    title: 'Group Travel Stories',
-    image: new URL('../assets/travel/gallery/gallery-1518684079-w900-80.jpg', import.meta.url).href,
+    title: 'Valley Road Journey',
+    type: 'video',
+    video: memoryVideos.roadTrip,
+    poster: new URL('../assets/travel/gallery/gallery-1518684079-w900-80.jpg', import.meta.url).href,
+  },
+  {
+    title: 'Weekend Trip Moments',
+    type: 'video',
+    video: memoryVideos.nature,
+    poster: new URL('../assets/travel/home/home-1506929562872-w900-80.jpg', import.meta.url).href,
+  },
+  {
+    title: 'Traveler Life Highlights',
+    type: 'video',
+    video: memoryVideos.adventure,
+    poster: new URL('../assets/travel/blogs/blogs-1508009603885-w900-80.jpg', import.meta.url).href,
   },
 ]
 
@@ -115,6 +148,56 @@ const recognitionItems = [
   { name: 'IIMB', image: recognition7 },
   { name: 'Uttar Pradesh Tourism Centre', image: recognition8 },
   { name: 'Experience Bengal', image: recognition9 },
+]
+
+const homeBlogPosts = [
+  {
+    title: 'Why TNT Tour And Travels Is The Perfect Choice For Your All-Girls Trip',
+    date: '30 Jul',
+    read: '6 minutes read',
+    image: new URL('../assets/travel/blogs/blogs-1500530855697-w900-80.jpg', import.meta.url).href,
+    excerpt: 'Plan a safer, smoother, and more memorable trip with curated stays, transport, and support.',
+  },
+  {
+    title: 'Book Now Pay Later With TNT Tour And Travels',
+    date: '25 Jun',
+    read: '5 minutes read',
+    image: new URL('../assets/travel/blogs/blogs-1508009603885-w900-80.jpg', import.meta.url).href,
+    excerpt: 'Make travel planning easier with flexible booking, clear pricing, and simple assistance.',
+  },
+  {
+    title: 'Why School Trips Are More Than Just Fun Days Out',
+    date: '18 Sep',
+    read: '9 minutes read',
+    image: new URL('../assets/travel/blogs/blogs-1488646953014-w900-80.jpg', import.meta.url).href,
+    excerpt: 'Educational tours can bring teamwork, confidence, and real-world learning together.',
+  },
+  {
+    title: '25 Best Places To Visit In India In July',
+    date: '16 Jun',
+    read: '17 minutes read',
+    image: new URL('../assets/travel/styles/styles-1488646953014-w1800-80.jpg', import.meta.url).href,
+    excerpt: 'There are many places to visit in India in July where monsoon weather, green views, and lighter crowds come together.',
+  },
+]
+
+const homeFaqItems = [
+  {
+    question: 'What does TNT Tour And Travels mean?',
+    answer: 'TNT Tour And Travels plans practical holidays, group trips, honeymoons, weekend getaways, and custom tours with end-to-end travel support.',
+  },
+  {
+    question: 'Who are the travelers of TNT Tour And Travels?',
+    answer: 'Our travelers include families, couples, solo travelers, school groups, corporate groups, and friends planning domestic or international trips.',
+  },
+  {
+    question: 'What are the destinations that TNT Tour And Travels covers?',
+    answer: 'We cover popular Indian destinations, weekend routes, Himalayan treks, honeymoon places, and international holidays including Thailand, Dubai, Bali, and more.',
+  },
+  {
+    question: 'How experienced are TNT Tour And Travels trip captains?',
+    answer: 'Trip captains and coordinators are selected for route knowledge, communication, traveler handling, and smooth on-ground coordination.',
+  },
 ]
 
 const trustStats = [
@@ -160,6 +243,7 @@ function Home() {
   const [activeStoryIndex, setActiveStoryIndex] = useState(0)
   const [storyTransition, setStoryTransition] = useState(true)
   const [showWhyMore, setShowWhyMore] = useState(false)
+  const [selectedMemoryVideo, setSelectedMemoryVideo] = useState(null)
 
   useEffect(() => {
     Promise.allSettled([
@@ -279,6 +363,7 @@ function Home() {
       title: 'Hot Selling Trips',
       route: '/domestic',
       banner: tripRowBanners.hot,
+      bannerVideo: tripRowVideos.hot,
       itemType: 'hot',
       items: hotSellingTrips.length ? hotSellingTrips : allPackages,
     },
@@ -332,13 +417,39 @@ function Home() {
     if (items.length >= 6) return items
     return Array.from({ length: 10 }, (_, index) => items[index % items.length])
   }
-  const renderTripRow = ({ title, route, banner, items }, itemType = 'package') => {
+  const formatCardDuration = (duration = '') => {
+    const days = duration.match(/(\d+)\s*Days?/i)?.[1]
+    const nights = duration.match(/(\d+)\s*Nights?/i)?.[1]
+    if (!days || !nights) return duration
+    return `${nights} Night ${days} Days`
+  }
+  const renderTripRow = ({ title, route, banner, bannerVideo, items }, itemType = 'package') => {
     const displayItems = items.length ? getDisplayItems(items) : []
+    const syncFiveSecondVideo = (event) => {
+      if (event.currentTarget.currentTime >= 5) {
+        event.currentTarget.currentTime = 0
+        event.currentTarget.play()
+      }
+    }
 
     return (
       <section className="home-trip-row" key={title} data-aos="fade-up">
         <div className="home-trip-banner">
-          <img src={banner} alt="" />
+          {bannerVideo ? (
+            <video
+              src={bannerVideo}
+              poster={banner}
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="metadata"
+              aria-hidden="true"
+              onTimeUpdate={syncFiveSecondVideo}
+            />
+          ) : (
+            <img src={banner} alt="" />
+          )}
           <div className="home-trip-banner-copy">
             <h3>{title}</h3>
             <p>A Journey Through Time, Colour And Culture</p>
@@ -376,11 +487,14 @@ function Home() {
             {displayItems.map((item, index) => {
               const name = itemType === 'destination' || itemType === 'hot' ? item.name || item.packageDestination || item.location?.split(',')[0] || item.title : item.packageDestination || item.location?.split(',')[0] || item.title
               const link = itemType === 'destination' || itemType === 'hot' ? `/destinations?search=${encodeURIComponent(name)}` : `/package/${item.id}`
+              const packageTitle = item.title || item.name || item.packageDestination || name
+              const cardDuration = formatCardDuration(item.duration)
+              const packageLabel = cardDuration ? `${packageTitle} ${cardDuration}` : packageTitle
               const priceText = itemType === 'destination' || itemType === 'hot'
                 ? item.price || item.price === 0
                   ? `Starting Price @ Rs ${Number(item.price).toLocaleString('en-IN')}`
                   : 'Cost As Per Requirement'
-                : `Starting Price @ Rs ${item.price.toLocaleString('en-IN')}`
+                : packageLabel
 
               return (
                 <SwiperSlide className="home-trip-slide" key={`${item._id || item.id || item.name}-${index}`}>
@@ -405,6 +519,9 @@ function Home() {
       </section>
     )
   }
+  const memoryCarouselItems = [...memoryMediaItems, ...memoryMediaItems]
+  const hotSellingSection = packageSections.find((section) => section.itemType === 'hot')
+  const otherPackageSections = packageSections.filter((section) => section.itemType !== 'hot')
 
   return (
     <>
@@ -434,15 +551,9 @@ function Home() {
       <section className="section home-trip-showcase">
         <Container>
           <div className="home-trip-stack">
-            {packageSections.map((section) => renderTripRow(section, section.itemType || 'package'))}
-          </div>
-        </Container>
-      </section>
-
-      <section className="section home-trip-showcase">
-        <Container>
-          <div className="home-trip-stack">
+            {hotSellingSection && renderTripRow(hotSellingSection, hotSellingSection.itemType || 'package')}
             {destinationSections.map((section) => renderTripRow(section, 'destination'))}
+            {otherPackageSections.map((section) => renderTripRow(section, section.itemType || 'package'))}
           </div>
         </Container>
       </section>
@@ -491,24 +602,56 @@ function Home() {
 
       <section className="section memories-section">
         <Container>
-          <SectionHeading eyebrow="Gallery" title="Memories For Life" text="Travel moments, destination views, and trip videos from our journeys." />
-          <div className="memories-grid">
-            {memoryMediaItems.map((item) => (
-              <article className="memory-card" key={item.title}>
-                {item.type === 'video' ? (
-                  <video controls playsInline preload="metadata" poster={item.poster} aria-label={item.title} />
-                ) : (
-                  <img src={item.image} alt={item.title} />
-                )}
-                <div>
-                  <strong>{item.title}</strong>
-                  <span>{item.type === 'video' ? 'Video' : 'Photo'}</span>
-                </div>
-              </article>
+          <SectionHeading eyebrow="Videos" title="Memories For Life" />
+          <Swiper
+            className="memories-carousel"
+            modules={[Autoplay, Navigation, Pagination]}
+            loop
+            loopAdditionalSlides={memoryCarouselItems.length}
+            watchSlidesProgress
+            slidesPerView={3}
+            slidesPerGroup={1}
+            spaceBetween={24}
+            speed={850}
+            autoplay={{ delay: 1900, disableOnInteraction: false, pauseOnMouseEnter: false }}
+            navigation
+            pagination={{ clickable: true }}
+            breakpoints={{
+              0: { slidesPerView: 1, spaceBetween: 18 },
+              768: { slidesPerView: 2, spaceBetween: 22 },
+              992: { slidesPerView: 3, spaceBetween: 24 },
+            }}
+          >
+            {memoryCarouselItems.map((item, index) => (
+              <SwiperSlide className="memory-slide" key={`${item.title}-${index}`}>
+                <button className="memory-card" type="button" onClick={() => setSelectedMemoryVideo(item)} aria-label={`Play ${item.title}`}>
+                  <img src={item.poster || item.image} alt={item.title} />
+                  <span className="memory-play" aria-hidden="true">
+                    <FaPlay />
+                  </span>
+                </button>
+              </SwiperSlide>
             ))}
-          </div>
+          </Swiper>
         </Container>
       </section>
+
+      <Modal
+        show={!!selectedMemoryVideo}
+        onHide={() => setSelectedMemoryVideo(null)}
+        centered
+        size="lg"
+        contentClassName="memory-video-modal"
+      >
+        <button className="memory-modal-close" type="button" onClick={() => setSelectedMemoryVideo(null)} aria-label="Close video">
+          <FaXmark />
+        </button>
+        {selectedMemoryVideo && (
+          <video controls autoPlay playsInline poster={selectedMemoryVideo.poster} aria-label={selectedMemoryVideo.title}>
+            <source src={selectedMemoryVideo.video} type="video/mp4" />
+          </video>
+        )}
+      </Modal>
 
       <section className="section soft-bg">
         <Container>
@@ -545,6 +688,57 @@ function Home() {
               </Col>
             )}
           </Row>
+        </Container>
+      </section>
+
+      <section className="section home-blogs-section">
+        <Container>
+          <SectionHeading eyebrow="Blogs" title="Our Blogs" />
+          <div className="home-blogs-layout">
+            <div className="home-blog-list">
+              {homeBlogPosts.slice(0, 3).map((post) => (
+                <article className="home-blog-list-card" key={post.title} data-aos="fade-up">
+                  <img src={post.image} alt={post.title} />
+                  <div>
+                    <div className="home-blog-meta">
+                      <span>Published on {post.date}</span>
+                      <span>{post.read}</span>
+                    </div>
+                    <h3>{post.title}</h3>
+                  </div>
+                </article>
+              ))}
+            </div>
+            <article className="home-blog-feature-card" data-aos="fade-up">
+              <img src={homeBlogPosts[3].image} alt={homeBlogPosts[3].title} />
+              <div className="home-blog-meta">
+                <span>Published on {homeBlogPosts[3].date}</span>
+                <span>{homeBlogPosts[3].read}</span>
+              </div>
+              <h3>{homeBlogPosts[3].title}</h3>
+              <p>{homeBlogPosts[3].excerpt}</p>
+            </article>
+          </div>
+          <div className="home-section-action">
+            <Button as={Link} to="/blogs" className="btn-gradient">View All <FaArrowRight /></Button>
+          </div>
+        </Container>
+      </section>
+
+      <section className="section home-faq-section">
+        <Container>
+          <SectionHeading eyebrow="FAQ" title="Have Any Doubts" />
+          <Accordion className="home-faq-accordion" flush>
+            {homeFaqItems.map((item, index) => (
+              <Accordion.Item eventKey={`${index}`} key={item.question}>
+                <Accordion.Header>{item.question}</Accordion.Header>
+                <Accordion.Body>{item.answer}</Accordion.Body>
+              </Accordion.Item>
+            ))}
+          </Accordion>
+          <div className="home-section-action">
+            <Button as={Link} to="/contact" variant="link" className="home-faq-more">View More</Button>
+          </div>
         </Container>
       </section>
 
