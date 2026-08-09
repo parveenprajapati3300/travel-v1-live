@@ -11,12 +11,15 @@ import packageRoutes from './routes/packageRoutes.js'
 import destinationRoutes from './routes/destinationRoutes.js'
 import categoryRoutes from './routes/categoryRoutes.js'
 import searchRoutes from './routes/searchRoutes.js'
+import hotSellingTripRoutes from './routes/hotSellingTripRoutes.js'
 import seedDefaultAdmin from './utils/seedDefaultAdmin.js'
+import seedHotSellingTrips from './utils/seedHotSellingTrips.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 dotenv.config({ path: resolve(__dirname, '.env') })
 await connectDB()
 await seedDefaultAdmin()
+await seedHotSellingTrips()
 
 const app = express()
 const PORT = process.env.PORT || 5000
@@ -32,6 +35,7 @@ app.use('/api/auth', authRoutes)
 app.use('/api/packages', packageRoutes)
 app.use('/api/destinations', destinationRoutes)
 app.use('/api/categories', categoryRoutes)
+app.use('/api/hot-selling-trips', hotSellingTripRoutes)
 app.use('/api/search', searchRoutes)
 app.use('/api/contact', contactRoutes)
 app.use('/api/inquiry', inquiryRoutes)

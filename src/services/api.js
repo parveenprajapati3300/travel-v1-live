@@ -2,6 +2,7 @@ import axios from 'axios'
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api',
+  timeout: 15000,
 })
 
 api.interceptors.request.use((config) => {
@@ -44,6 +45,11 @@ export const getAdminCategories = () => api.get('/categories', { params: { inclu
 export const createCategory = (payload) => api.post('/categories', payload)
 export const updateCategory = (id, payload) => api.patch(`/categories/${id}`, payload)
 export const deleteCategory = (id) => api.delete(`/categories/${id}`)
+export const getHotSellingTrips = () => api.get('/hot-selling-trips')
+export const getAdminHotSellingTrips = () => api.get('/hot-selling-trips', { params: { includeInactive: true } })
+export const createHotSellingTrip = (payload) => api.post('/hot-selling-trips', payload)
+export const updateHotSellingTrip = (id, payload) => api.patch(`/hot-selling-trips/${id}`, payload)
+export const deleteHotSellingTrip = (id) => api.delete(`/hot-selling-trips/${id}`)
 export const getSearchSuggestions = (query) => api.get('/search', {
   params: query ? { q: query } : {},
 })

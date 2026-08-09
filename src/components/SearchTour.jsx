@@ -10,7 +10,7 @@ const typeLabels = {
   theme: 'Theme',
 }
 
-function SearchTour({ placeholder = 'Search by theme, package and destination', triggerLabel = 'Explore Destinations', triggerClassName = '' }) {
+function SearchTour({ placeholder = 'Search by theme, package and destination', triggerLabel = 'Explore Destinations', triggerClassName = '', variant = 'modal' }) {
   const navigate = useNavigate()
   const searchInputRef = useRef(null)
   const reopenBlockedUntilRef = useRef(0)
@@ -98,6 +98,82 @@ function SearchTour({ placeholder = 'Search by theme, package and destination', 
     navigate(value ? `/destinations?search=${encodeURIComponent(value)}` : '/destinations')
   }
 
+  const searchModal = (
+    <Modal
+      show={isOpen}
+      onHide={closeSearchPanel}
+      centered
+      backdrop
+      keyboard
+      restoreFocus={false}
+      dialogClassName="search-fullscreen-dialog"
+      contentClassName="search-fullscreen-panel"
+      aria-labelledby="search-trips-title"
+    >
+      <div className="search-fullscreen-header">
+        <span id="search-trips-title">Search Trips</span>
+        <button type="button" onClick={closeSearchPanel} aria-label="Close search">
+          <FaXmark />
+        </button>
+      </div>
+
+      <Form className="hero-destination-search search-overlay-form" onSubmit={submitSearch}>
+        <FaMagnifyingGlass />
+        <Form.Control
+          ref={searchInputRef}
+          value={query}
+          onChange={(event) => setQuery(event.target.value)}
+          placeholder={placeholder}
+          aria-label="Search by theme, package and destination"
+          autoComplete="off"
+        />
+        <Button type="submit">Explore</Button>
+      </Form>
+
+      <div className="search-suggestion-list search-overlay-results">
+        {suggestions.length > 0 ? suggestions.map((item) => (
+          <button
+            type="button"
+            key={`${item.type}-${item.id}`}
+            className="search-suggestion-item"
+            onMouseDown={(event) => selectResult(event, item)}
+            onClick={(event) => selectResult(event, item)}
+          >
+            {item.image && <img src={item.image} alt={item.label} />}
+            <span>
+              <strong>{item.label}</strong>
+              <small>{typeLabels[item.type] || item.type}{item.meta ? ` - ${item.meta}` : ''}</small>
+            </span>
+          </button>
+        )) : (
+          <div className="search-empty-state">No result found. Type another theme, package or destination.</div>
+        )}
+      </div>
+    </Modal>
+  )
+
+  if (variant === 'banner') {
+    return (
+      <>
+        <div className="hero-inline-search hero-banner-search" data-aos="fade-up">
+          <Form className="hero-destination-search" onSubmit={openSearchPanel} onClick={openSearchPanel}>
+            <FaMagnifyingGlass />
+            <Form.Control
+              value=""
+              readOnly
+              onFocus={openSearchPanel}
+              placeholder={placeholder}
+              aria-label="Search by theme, package and destination"
+              autoComplete="off"
+            />
+            <Button type="button" className="hero-search-text-btn" onClick={openSearchPanel}>Explore</Button>
+          </Form>
+        </div>
+        {searchModal}
+      </>
+    )
+  }
+
   return (
     <>
       <button type="button" className={`hero-search-trigger ${triggerClassName}`.trim()} onClick={openSearchPanel} data-aos="fade-up">
@@ -110,57 +186,7 @@ function SearchTour({ placeholder = 'Search by theme, package and destination', 
         </span>
       </button>
 
-      <Modal
-        show={isOpen}
-        onHide={closeSearchPanel}
-        centered
-        backdrop
-        keyboard
-        restoreFocus={false}
-        dialogClassName="search-fullscreen-dialog"
-        contentClassName="search-fullscreen-panel"
-        aria-labelledby="search-trips-title"
-      >
-        <div className="search-fullscreen-header">
-          <span id="search-trips-title">Search Trips</span>
-          <button type="button" onClick={closeSearchPanel} aria-label="Close search">
-            <FaXmark />
-          </button>
-        </div>
-
-        <Form className="hero-destination-search search-overlay-form" onSubmit={submitSearch}>
-          <FaMagnifyingGlass />
-          <Form.Control
-            ref={searchInputRef}
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            placeholder={placeholder}
-            aria-label="Search by theme, package and destination"
-            autoComplete="off"
-          />
-          <Button type="submit">Explore</Button>
-        </Form>
-
-        <div className="search-suggestion-list search-overlay-results">
-          {suggestions.length > 0 ? suggestions.map((item) => (
-            <button
-              type="button"
-              key={`${item.type}-${item.id}`}
-              className="search-suggestion-item"
-              onMouseDown={(event) => selectResult(event, item)}
-              onClick={(event) => selectResult(event, item)}
-            >
-              {item.image && <img src={item.image} alt={item.label} />}
-              <span>
-                <strong>{item.label}</strong>
-                <small>{typeLabels[item.type] || item.type}{item.meta ? ` - ${item.meta}` : ''}</small>
-              </span>
-            </button>
-          )) : (
-            <div className="search-empty-state">No result found. Type another theme, package or destination.</div>
-          )}
-        </div>
-      </Modal>
+      {searchModal}
     </>
   )
 }

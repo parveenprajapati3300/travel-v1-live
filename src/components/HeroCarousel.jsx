@@ -96,7 +96,7 @@ function HeroCarousel() {
                     <p className="hero-banner-subtitle">
                       {heroSubtitle}
                     </p>
-                    <SearchTour triggerLabel="Explore Destinations" triggerClassName="hero-banner-cta" />
+                    <SearchTour variant="banner" />
                   </div>
                 </div>
               </Container>

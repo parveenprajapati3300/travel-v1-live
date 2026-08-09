@@ -28,7 +28,7 @@ import recognition6 from '../assets/recognitions/recognition-6.png'
 import recognition7 from '../assets/recognitions/recognition-7.png'
 import recognition8 from '../assets/recognitions/recognition-8.png'
 import recognition9 from '../assets/recognitions/recognition-9.png'
-import { getCategories, getDestinations, getPackages, getPackagesByCategory } from '../services/api'
+import { getAdminHotSellingTrips, getCategories, getDestinations, getPackages, getPackagesByCategory } from '../services/api'
 import { slugify } from '../utils/slug'
 
 const travelerStories = [
@@ -89,6 +89,22 @@ const tripRowBanners = {
   backpacking: new URL('../assets/travel/styles/styles-1507525428034-w1600-80.jpg', import.meta.url).href,
 }
 
+const memoryMediaItems = [
+  {
+    title: 'Trip Video',
+    type: 'video',
+    poster: new URL('../assets/travel/gallery/gallery-1507525428034-w900-80.jpg', import.meta.url).href,
+  },
+  {
+    title: 'Memories From The Hills',
+    image: new URL('../assets/travel/gallery/gallery-1528127269322-w900-80.jpg', import.meta.url).href,
+  },
+  {
+    title: 'Group Travel Stories',
+    image: new URL('../assets/travel/gallery/gallery-1518684079-w900-80.jpg', import.meta.url).href,
+  },
+]
+
 const recognitionItems = [
   { name: 'Startup India', image: recognition1 },
   { name: 'MSME', image: recognition2 },
@@ -131,6 +147,7 @@ const trustStats = [
 function Home() {
   const [homeDomesticPackages, setHomeDomesticPackages] = useState([])
   const [homeInternationalPackages, setHomeInternationalPackages] = useState([])
+  const [hotSellingTrips, setHotSellingTrips] = useState([])
   const [homeDestinations, setHomeDestinations] = useState([])
   const [homeCategories, setHomeCategories] = useState([])
   const [groupTrips, setGroupTrips] = useState([])
@@ -145,44 +162,57 @@ function Home() {
   const [showWhyMore, setShowWhyMore] = useState(false)
 
   useEffect(() => {
-    Promise.all([
-      getPackages('domestic'),
-      getPackages('international'),
-      getDestinations(),
-      getCategories(),
-      getPackagesByCategory('Group Tour'),
-      getPackagesByCategory('Honeymoon Tour'),
-      getPackagesByCategory('Weekend Tour'),
-      getPackagesByCategory('Hill Station Tour'),
-      getPackagesByCategory('Adventure Tour'),
-      getPackagesByCategory('Solo Trip'),
+    Promise.allSettled([
+      getPackages('domestic').then((response) => ['domestic', response.data]),
+      getPackages('international').then((response) => ['international', response.data]),
+      getAdminHotSellingTrips().then((response) => ['hotSelling', response.data]),
+      getDestinations().then((response) => ['destinations', response.data]),
+      getCategories().then((response) => ['categories', response.data]),
+      getPackagesByCategory('Group Tour').then((response) => ['group', response.data]),
+      getPackagesByCategory('Honeymoon Tour').then((response) => ['honeymoon', response.data]),
+      getPackagesByCategory('Weekend Tour').then((response) => ['weekend', response.data]),
+      getPackagesByCategory('Hill Station Tour').then((response) => ['hill', response.data]),
+      getPackagesByCategory('Adventure Tour').then((response) => ['adventure', response.data]),
+      getPackagesByCategory('Solo Trip').then((response) => ['solo', response.data]),
     ])
-      .then(([
-        domesticResponse,
-        internationalResponse,
-        destinationResponse,
-        categoryResponse,
-        groupResponse,
-        honeymoonResponse,
-        weekendResponse,
-        hillResponse,
-        adventureResponse,
-        soloResponse,
-      ]) => {
-        setHomeDomesticPackages(domesticResponse.data)
-        setHomeInternationalPackages(internationalResponse.data)
-        setHomeDestinations(destinationResponse.data)
-        setHomeCategories(categoryResponse.data)
-        setGroupTrips(groupResponse.data)
-        setHoneymoonTrips(honeymoonResponse.data)
-        setWeekendTrips(weekendResponse.data)
-        setHillTrips(hillResponse.data)
-        setAdventureTrips(adventureResponse.data)
-        setSoloTrips(soloResponse.data)
+      .then((responses) => {
+        const nextData = {
+          domestic: [],
+          international: [],
+          hotSelling: [],
+          destinations: [],
+          categories: [],
+          group: [],
+          honeymoon: [],
+          weekend: [],
+          hill: [],
+          adventure: [],
+          solo: [],
+        }
+
+        responses.forEach((response) => {
+          if (response.status === 'fulfilled') {
+            const [key, data] = response.value
+            nextData[key] = data
+          }
+        })
+
+        setHomeDomesticPackages(nextData.domestic)
+        setHomeInternationalPackages(nextData.international)
+        setHotSellingTrips(nextData.hotSelling)
+        setHomeDestinations(nextData.destinations)
+        setHomeCategories(nextData.categories)
+        setGroupTrips(nextData.group)
+        setHoneymoonTrips(nextData.honeymoon)
+        setWeekendTrips(nextData.weekend)
+        setHillTrips(nextData.hill)
+        setAdventureTrips(nextData.adventure)
+        setSoloTrips(nextData.solo)
       })
       .catch(() => {
         setHomeDomesticPackages([])
         setHomeInternationalPackages([])
+        setHotSellingTrips([])
         setHomeDestinations([])
         setHomeCategories([])
         setGroupTrips([])
@@ -249,7 +279,8 @@ function Home() {
       title: 'Hot Selling Trips',
       route: '/domestic',
       banner: tripRowBanners.hot,
-      items: allPackages,
+      itemType: 'hot',
+      items: hotSellingTrips.length ? hotSellingTrips : allPackages,
     },
     {
       title: 'Domestic Trips',
@@ -297,71 +328,83 @@ function Home() {
       })
     }
   }
-  const renderTripRow = ({ title, route, banner, items }, itemType = 'package') => (
-    <section className="home-trip-row" key={title} data-aos="fade-up">
-      <div className="home-trip-banner">
-        <img src={banner} alt="" />
-        <div className="home-trip-banner-copy">
-          <h3>{title}</h3>
-          <p>A Journey Through Time, Colour And Culture</p>
-          <Link className="home-trip-explore" to={route}>Explore</Link>
-        </div>
-      </div>
-      {loading ? (
-        <div className="home-trip-card-rail">
-          {tripCardSkeletons.map((slot) => (
-            <article className="home-trip-mini-card card-skeleton" key={`${title}-skeleton-${slot}`} aria-busy="true">
-              <span className="card-skeleton-media" />
-              <span className="card-skeleton-line card-skeleton-line-lg" />
-              <span className="card-skeleton-line card-skeleton-line-sm" />
-            </article>
-          ))}
-        </div>
-      ) : items.length ? (
-        <Swiper
-          className="home-trip-card-rail home-trip-swiper"
-          modules={[Autoplay]}
-          slidesPerView={4}
-          slidesPerGroup={1}
-          spaceBetween={20}
-          loop={items.length > 5}
-          speed={850}
-          autoplay={{ delay: 1900, disableOnInteraction: false, pauseOnMouseEnter: true }}
-          grabCursor
-          breakpoints={{
-            0: { slidesPerView: 1.2, spaceBetween: 14 },
-            576: { slidesPerView: 2, spaceBetween: 16 },
-            768: { slidesPerView: 3, spaceBetween: 18 },
-            992: { slidesPerView: 4, spaceBetween: 20 },
-          }}
-        >
-          {items.map((item) => {
-            const link = itemType === 'destination' ? `/destination/${slugify(item.name)}` : `/package/${item.id}`
-            const name = itemType === 'destination' ? item.name : item.packageDestination || item.location?.split(',')[0] || item.title
-            const priceText = itemType === 'destination' ? 'Cost As Per Requirement' : `Starting Price @ Rs ${item.price.toLocaleString('en-IN')}`
+  const getDisplayItems = (items) => {
+    if (items.length >= 6) return items
+    return Array.from({ length: 10 }, (_, index) => items[index % items.length])
+  }
+  const renderTripRow = ({ title, route, banner, items }, itemType = 'package') => {
+    const displayItems = items.length ? getDisplayItems(items) : []
 
-            return (
-              <SwiperSlide className="home-trip-slide" key={item._id || item.id || item.name}>
-                <Link className="home-trip-mini-card" to={link}>
-                  <img src={item.image} alt={name} />
-                  <strong>{name}</strong>
-                  <small>{priceText}</small>
-                </Link>
-              </SwiperSlide>
-            )
-          })}
-        </Swiper>
-      ) : (
-        <div className="home-trip-card-rail">
-          <div className="empty-state-card home-trip-empty">
-            <h3>No trips added yet</h3>
-            <p>Add matching items from admin to show this section.</p>
+    return (
+      <section className="home-trip-row" key={title} data-aos="fade-up">
+        <div className="home-trip-banner">
+          <img src={banner} alt="" />
+          <div className="home-trip-banner-copy">
+            <h3>{title}</h3>
+            <p>A Journey Through Time, Colour And Culture</p>
+            <Link className="home-trip-explore" to={route}>Explore</Link>
           </div>
         </div>
-      )}
-      <Link className="home-trip-view-all" to={route}>View All <FaArrowRight /></Link>
-    </section>
-  )
+        {loading ? (
+          <div className="home-trip-card-rail">
+            {tripCardSkeletons.map((slot) => (
+              <article className="home-trip-mini-card card-skeleton" key={`${title}-skeleton-${slot}`} aria-busy="true">
+                <span className="card-skeleton-media" />
+                <span className="card-skeleton-line card-skeleton-line-lg" />
+                <span className="card-skeleton-line card-skeleton-line-sm" />
+              </article>
+            ))}
+          </div>
+        ) : displayItems.length ? (
+          <Swiper
+            className="home-trip-card-rail home-trip-swiper"
+            modules={[Autoplay]}
+            slidesPerView={5}
+            slidesPerGroup={1}
+            spaceBetween={20}
+            loop={displayItems.length > 5}
+            speed={850}
+            autoplay={{ delay: 1900, disableOnInteraction: false, pauseOnMouseEnter: true }}
+            grabCursor
+            breakpoints={{
+              0: { slidesPerView: 1.2, spaceBetween: 14 },
+              576: { slidesPerView: 2, spaceBetween: 16 },
+              768: { slidesPerView: 3, spaceBetween: 18 },
+              992: { slidesPerView: 5, spaceBetween: 20 },
+            }}
+          >
+            {displayItems.map((item, index) => {
+              const name = itemType === 'destination' || itemType === 'hot' ? item.name || item.packageDestination || item.location?.split(',')[0] || item.title : item.packageDestination || item.location?.split(',')[0] || item.title
+              const link = itemType === 'destination' || itemType === 'hot' ? `/destinations?search=${encodeURIComponent(name)}` : `/package/${item.id}`
+              const priceText = itemType === 'destination' || itemType === 'hot'
+                ? item.price || item.price === 0
+                  ? `Starting Price @ Rs ${Number(item.price).toLocaleString('en-IN')}`
+                  : 'Cost As Per Requirement'
+                : `Starting Price @ Rs ${item.price.toLocaleString('en-IN')}`
+
+              return (
+                <SwiperSlide className="home-trip-slide" key={`${item._id || item.id || item.name}-${index}`}>
+                  <Link className="home-trip-mini-card" to={link}>
+                    <img src={item.image} alt={name} />
+                    <strong>{name}</strong>
+                    <small>{priceText}</small>
+                  </Link>
+                </SwiperSlide>
+              )
+            })}
+          </Swiper>
+        ) : (
+          <div className="home-trip-card-rail">
+            <div className="empty-state-card home-trip-empty">
+              <h3>No trips added yet</h3>
+              <p>Add matching items from admin to show this section.</p>
+            </div>
+          </div>
+        )}
+        <Link className="home-trip-view-all" to={route}>View All <FaArrowRight /></Link>
+      </section>
+    )
+  }
 
   return (
     <>
@@ -390,7 +433,14 @@ function Home() {
 
       <section className="section home-trip-showcase">
         <Container>
-          <SectionHeading title="Popular Destinations" text="Explore domestic and international places in separate rows." />
+          <div className="home-trip-stack">
+            {packageSections.map((section) => renderTripRow(section, section.itemType || 'package'))}
+          </div>
+        </Container>
+      </section>
+
+      <section className="section home-trip-showcase">
+        <Container>
           <div className="home-trip-stack">
             {destinationSections.map((section) => renderTripRow(section, 'destination'))}
           </div>
@@ -439,11 +489,23 @@ function Home() {
         </Container>
       </section>
 
-      <section className="section home-trip-showcase">
+      <section className="section memories-section">
         <Container>
-          <SectionHeading eyebrow="Packages" title="Trips By Collection" text="Curated holiday rows for quick browsing." />
-          <div className="home-trip-stack">
-            {packageSections.map((section) => renderTripRow(section))}
+          <SectionHeading eyebrow="Gallery" title="Memories For Life" text="Travel moments, destination views, and trip videos from our journeys." />
+          <div className="memories-grid">
+            {memoryMediaItems.map((item) => (
+              <article className="memory-card" key={item.title}>
+                {item.type === 'video' ? (
+                  <video controls playsInline preload="metadata" poster={item.poster} aria-label={item.title} />
+                ) : (
+                  <img src={item.image} alt={item.title} />
+                )}
+                <div>
+                  <strong>{item.title}</strong>
+                  <span>{item.type === 'video' ? 'Video' : 'Photo'}</span>
+                </div>
+              </article>
+            ))}
           </div>
         </Container>
       </section>
@@ -646,7 +708,7 @@ function Home() {
                 </article>
               ))}
             </div>
-          <SectionHeading  text="Trusted travel operations, tourism associations, and community milestones that keep every TNT journey accountable.Trusted travel operations, tourism associations, and community milestones that keep every TNT journey accountable.Trusted travel operations, tourism associations, and community milestones that keep every TNT journey accountable. " />
+            <SectionHeading text="Trusted travel operations, tourism associations, and community milestones that keep every TNT journey accountable.Trusted travel operations, tourism associations, and community milestones that keep every TNT journey accountable.Trusted travel operations, tourism associations, and community milestones that keep every TNT journey accountable. " />
           </div>
         </Container>
       </section>

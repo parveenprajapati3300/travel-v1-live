@@ -11,7 +11,7 @@ const initialForm = {
   isActive: true,
 }
 
-function TaxonomyManager({ items, title, label, includePrice = false, includeType = false, onCreate, onUpdate, onDelete }) {
+function TaxonomyManager({ items, title, label, includePrice = false, optionalPrice = false, includeType = false, onCreate, onUpdate, onDelete }) {
   const [mode, setMode] = useState('list')
   const [form, setForm] = useState(initialForm)
   const [editingId, setEditingId] = useState('')
@@ -121,7 +121,7 @@ function TaxonomyManager({ items, title, label, includePrice = false, includeTyp
     const nextFieldErrors = {}
     if (!form.name.trim()) nextFieldErrors.name = `${label} name is required.`
     if (!form.image.trim()) nextFieldErrors.image = `${label} image is required.`
-    if (includePrice && !form.price) nextFieldErrors.price = `${label} price is required.`
+    if (includePrice && !optionalPrice && !form.price) nextFieldErrors.price = `${label} price is required.`
 
     if (Object.keys(nextFieldErrors).length) {
       setFieldErrors(nextFieldErrors)
@@ -134,7 +134,7 @@ function TaxonomyManager({ items, title, label, includePrice = false, includeTyp
       ...(includeType ? { type: form.type } : {}),
       image: form.image,
       isActive: form.isActive,
-      ...(includePrice ? { price: form.price } : {}),
+      ...(includePrice && form.price !== '' ? { price: form.price } : {}),
     }
 
     if (editingId) {
@@ -179,8 +179,8 @@ function TaxonomyManager({ items, title, label, includePrice = false, includeTyp
               )}
               {includePrice && (
                 <Col md={3}>
-                  <Form.Label>Price</Form.Label>
-                  <Form.Control type="number" name="price" value={form.price} onChange={updateField} placeholder="24999" isInvalid={!!fieldErrors.price} />
+                <Form.Label>Price {optionalPrice ? '(Optional)' : ''}</Form.Label>
+                <Form.Control type="number" name="price" value={form.price} onChange={updateField} placeholder={optionalPrice ? 'Leave blank for cost as per requirement' : '24999'} isInvalid={!!fieldErrors.price} />
                   <Form.Control.Feedback type="invalid">{fieldErrors.price}</Form.Control.Feedback>
                 </Col>
               )}
@@ -260,7 +260,7 @@ function TaxonomyManager({ items, title, label, includePrice = false, includeTyp
                     <img src={item.image} alt={item.name} />
                   </button>
                 </td>
-                {includePrice && <td>Rs {Number(item.price).toLocaleString('en-IN')}</td>}
+                {includePrice && <td>{item.price || item.price === 0 ? `Rs ${Number(item.price).toLocaleString('en-IN')}` : 'Cost As Per Requirement'}</td>}
                 <td>
                   <div className="table-actions">
                     <Button size="sm" variant="outline-dark" onClick={() => openEdit(item)}><FaPen /></Button>

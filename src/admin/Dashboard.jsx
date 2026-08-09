@@ -6,6 +6,7 @@ import {
   FaHouse,
   FaLayerGroup,
   FaInbox,
+  FaFire,
   FaPlus,
   FaRightFromBracket,
   FaSuitcaseRolling,
@@ -20,25 +21,31 @@ import TaxonomyManager from './TaxonomyManager'
 import {
   createCategory,
   createDestination,
+  createHotSellingTrip,
   createPackage,
   deleteCategory,
   deleteDestination,
   deleteContact,
+  deleteHotSellingTrip,
   deleteInquiry,
   deletePackage,
   getAdminCategories,
   getAdminDestinations,
+  getAdminHotSellingTrips,
   getAdminPackages,
   getContacts,
+  getHotSellingTrips,
   getInquiries,
   updateCategory,
   updateDestination,
+  updateHotSellingTrip,
   updatePackage,
 } from '../services/api'
 
 const navItems = [
   { key: 'dashboard', label: 'Dashboard', path: '/admin/dashboard', icon: <FaHouse /> },
   { key: 'packages', label: 'Packages', path: '/admin/packages', icon: <FaSuitcaseRolling /> },
+  { key: 'hot-selling-trips', label: 'Hot Selling Trips', path: '/admin/hot-selling-trips', icon: <FaFire /> },
   { key: 'destinations', label: 'Destinations', path: '/admin/destinations', icon: <FaMapLocationDot /> },
   { key: 'categories', label: 'Categories', path: '/admin/categories', icon: <FaLayerGroup /> },
   { key: 'inquiries', label: 'Inquiries', path: '/admin/inquiries', icon: <FaInbox /> },
@@ -53,6 +60,7 @@ function Dashboard() {
   const [inquiries, setInquiries] = useState([])
   const [contacts, setContacts] = useState([])
   const [packages, setPackages] = useState([])
+  const [hotSellingTrips, setHotSellingTrips] = useState([])
   const [destinations, setDestinations] = useState([])
   const [categories, setCategories] = useState([])
   const [loading, setLoading] = useState(true)
@@ -66,27 +74,58 @@ function Dashboard() {
       inquiries: inquiries.length,
       contacts: contacts.length,
       packages: packages.length,
+      hotSellingTrips: hotSellingTrips.length,
       destinations: destinations.length,
       categories: categories.length,
     }
-  }, [categories.length, contacts.length, destinations.length, inquiries.length, packages.length])
+  }, [categories.length, contacts.length, destinations.length, hotSellingTrips.length, inquiries.length, packages.length])
 
   const loadDashboard = useCallback(async () => {
     setError('')
     try {
       setLoading(true)
-      const [inquiryResponse, contactResponse, packageResponse, destinationResponse, categoryResponse] = await Promise.all([
-        getInquiries(),
-        getContacts(),
-        getAdminPackages(),
-        getAdminDestinations(),
-        getAdminCategories(),
+      const requests = await Promise.allSettled([
+        getInquiries().then((response) => ['inquiries', response.data]),
+        getContacts().then((response) => ['contacts', response.data]),
+        getAdminPackages().then((response) => ['packages', response.data]),
+        getAdminHotSellingTrips().then((response) => ['hotSellingTrips', response.data]),
+        getAdminDestinations().then((response) => ['destinations', response.data]),
+        getAdminCategories().then((response) => ['categories', response.data]),
       ])
-      setInquiries(inquiryResponse.data)
-      setContacts(contactResponse.data)
-      setPackages(packageResponse.data)
-      setDestinations(destinationResponse.data)
-      setCategories(categoryResponse.data)
+
+      const failedAuth = requests.find((request) => request.status === 'rejected' && request.reason?.response?.status === 401)
+      if (failedAuth) {
+        localStorage.removeItem('tripnest_admin_token')
+        navigate('/admin-login')
+        return
+      }
+
+      const nextData = {
+        inquiries: [],
+        contacts: [],
+        packages: [],
+        hotSellingTrips: [],
+        destinations: [],
+        categories: [],
+      }
+
+      requests.forEach((request) => {
+        if (request.status === 'fulfilled') {
+          const [key, data] = request.value
+          nextData[key] = data
+        }
+      })
+
+      setInquiries(nextData.inquiries)
+      setContacts(nextData.contacts)
+      setPackages(nextData.packages)
+      setHotSellingTrips(nextData.hotSellingTrips)
+      setDestinations(nextData.destinations)
+      setCategories(nextData.categories)
+
+      if (requests.some((request) => request.status === 'rejected')) {
+        setError('Some admin data could not be loaded. Please refresh once after the server updates.')
+      }
     } catch (apiError) {
       if (apiError.response?.status === 401) {
         localStorage.removeItem('tripnest_admin_token')
@@ -103,6 +142,33 @@ function Dashboard() {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     loadDashboard()
   }, [loadDashboard])
+
+  const loadHotSellingTrips = useCallback(async () => {
+    try {
+      const { data } = await getAdminHotSellingTrips()
+      setHotSellingTrips(data)
+    } catch (adminError) {
+      if (adminError.response?.status === 401) {
+        localStorage.removeItem('tripnest_admin_token')
+        navigate('/admin-login')
+        return
+      }
+
+      try {
+        const { data } = await getHotSellingTrips()
+        setHotSellingTrips(data)
+      } catch (publicError) {
+        setError(publicError.response?.data?.message || 'Unable to load hot selling trips.')
+      }
+    }
+  }, [navigate])
+
+  useEffect(() => {
+    if (activeView === 'hot-selling-trips') {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      loadHotSellingTrips()
+    }
+  }, [activeView, loadHotSellingTrips])
 
   const logout = () => {
     localStorage.removeItem('tripnest_admin_token')
@@ -142,6 +208,27 @@ function Dashboard() {
     await deletePackage(id)
     setPackages((current) => current.filter((item) => item._id !== id))
     setNotice('Package deleted successfully.')
+  }
+
+  const handleCreateHotSellingTrip = async (payload) => {
+    const { data } = await createHotSellingTrip(payload)
+    setHotSellingTrips((current) => [data.trip, ...current])
+    loadHotSellingTrips()
+    setNotice('Hot selling trip created successfully.')
+  }
+
+  const handleUpdateHotSellingTrip = async (id, payload) => {
+    const { data } = await updateHotSellingTrip(id, payload)
+    setHotSellingTrips((current) => current.map((item) => (item._id === id ? data.trip : item)))
+    loadHotSellingTrips()
+    setNotice('Hot selling trip updated successfully.')
+  }
+
+  const handleDeleteHotSellingTrip = async (id) => {
+    await deleteHotSellingTrip(id)
+    setHotSellingTrips((current) => current.filter((item) => item._id !== id))
+    loadHotSellingTrips()
+    setNotice('Hot selling trip deleted successfully.')
   }
 
   const handleCreateDestination = async (payload) => {
@@ -209,6 +296,21 @@ function Dashboard() {
       )
     }
 
+    if (activeView === 'hot-selling-trips') {
+      return (
+        <TaxonomyManager
+          items={hotSellingTrips}
+          title="Hot Selling Trips"
+          label="Destination Name"
+          includePrice
+          optionalPrice
+          onCreate={handleCreateHotSellingTrip}
+          onUpdate={handleUpdateHotSellingTrip}
+          onDelete={handleDeleteHotSellingTrip}
+        />
+      )
+    }
+
     if (activeView === 'categories') {
       return (
         <TaxonomyManager
@@ -268,6 +370,7 @@ function Dashboard() {
           {[
             ['Leads', stats.leads, <FaInbox />, 'inquiries', `${stats.inquiries} inquiries + ${stats.contacts} messages`],
             ['Packages', stats.packages, <FaSuitcaseRolling />, 'packages', 'Active travel products'],
+            ['Hot Selling', stats.hotSellingTrips, <FaFire />, 'hot-selling-trips', 'Homepage hot selling cards'],
             ['Destinations', stats.destinations, <FaMapLocationDot />, 'destinations', 'Places shown on site'],
             ['Categories', stats.categories, <FaLayerGroup />, 'categories', 'Themes and tour styles'],
           ].map(([label, value, icon, view, hint]) => (
