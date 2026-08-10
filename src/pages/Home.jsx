@@ -434,6 +434,13 @@ function Home() {
 
     return (
       <section className="home-trip-row" key={title} data-aos="fade-up">
+        <div className="home-trip-mobile-head">
+          <div>
+            <h3>{title}</h3>
+            <p>A Journey Through Time, Colour And Culture</p>
+          </div>
+          <Link to={route}>View All <FaArrowRight /></Link>
+        </div>
         <div className="home-trip-banner">
           {bannerVideo ? (
             <video

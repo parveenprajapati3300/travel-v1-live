@@ -1083,6 +1083,10 @@ p {
   box-shadow: 0 28px 70px rgba(0, 0, 0, 0.34);
 }
 
+.home-trip-mobile-head {
+  display: none;
+}
+
 .home-trip-banner::after {
   content: "";
   position: absolute;
@@ -1224,7 +1228,7 @@ p {
   display: -webkit-box;
   min-height: 1.15em;
   overflow: hidden;
-  font-size: 1.72rem;
+  font-size: 18px;
   font-weight: 900;
   line-height: 1.05;
   text-align: center;
@@ -5778,14 +5782,49 @@ body.gallery-lightbox-open {
     padding-bottom: 2rem;
   }
 
-  .home-trip-banner {
-    height: 260px;
-    min-height: 260px;
+  .home-trip-mobile-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.15rem;
   }
 
-  .home-trip-banner img,
-  .home-trip-banner video {
-    min-height: 260px;
+  .home-trip-mobile-head h3 {
+    margin: 0;
+    color: var(--ink);
+    font-size: 1.3rem;
+    font-weight: 950;
+    line-height: 1.08;
+  }
+
+  .home-trip-mobile-head p {
+    margin: 0.45rem 0 0;
+    color: var(--muted);
+    font-size: 14;
+    font-weight: 750;
+    line-height: 1.35;
+  }
+
+  .home-trip-mobile-head a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3rem;
+    flex: 0 0 auto;
+    min-height: 2.35rem;
+    padding: 0.58rem 0.8rem;
+    border-radius: 999px;
+    color: #fff;
+    font-size: 0.78rem;
+    font-weight: 900;
+    text-decoration: none;
+    background: linear-gradient(135deg, var(--button-secondary), var(--button-primary));
+    box-shadow: 0 12px 28px var(--button-shadow);
+  }
+
+  .home-trip-banner {
+    display: none;
   }
 
   .home-trip-banner-copy {
@@ -5812,7 +5851,7 @@ body.gallery-lightbox-open {
     grid-template-columns: none;
     grid-auto-flow: column;
     width: calc(100% - 0.75rem);
-    margin-top: -4.7rem;
+    margin-top: 0;
     overflow-x: auto;
     padding: 0 0.25rem 0.5rem;
     scroll-snap-type: x mandatory;
@@ -5827,6 +5866,10 @@ body.gallery-lightbox-open {
     height: clamp(250px, 72vw, 298px);
     min-height: clamp(250px, 72vw, 298px);
     scroll-snap-align: start;
+  }
+
+  .home-trip-view-all {
+    display: none;
   }
 
   .memories-carousel {
