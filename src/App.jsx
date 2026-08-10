@@ -18,6 +18,7 @@ import DestinationPackages from './pages/DestinationPackages'
 import GroupTrips from './pages/GroupTrips'
 import International from './pages/International'
 import WeekendGetaways from './pages/WeekendGetaways'
+import UpcomingPackages from './pages/UpcomingPackages'
 import CustomizedTours from './pages/CustomizedTours'
 import Community from './pages/Community'
 import Blogs from './pages/Blogs'
@@ -66,6 +67,7 @@ function AppRoutes() {
         <Route path="/group-trips" element={<GroupTrips />} />
         <Route path="/international" element={<International />} />
         <Route path="/weekend-getaways" element={<WeekendGetaways />} />
+        <Route path="/upcoming-packages" element={<UpcomingPackages />} />
         <Route path="/customized-tours" element={<CustomizedTours />} />
         <Route path="/community" element={<Community />} />
         <Route path="/blogs" element={<Blogs />} />

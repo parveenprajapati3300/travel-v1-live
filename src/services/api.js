@@ -21,15 +21,17 @@ export const deleteInquiry = (id) => api.delete(`/inquiry/${id}`)
 export const submitContact = (payload) => api.post('/contact', payload)
 export const getContacts = () => api.get('/contact')
 export const deleteContact = (id) => api.delete(`/contact/${id}`)
-export const getPackages = (category, packageCategory, destination) => api.get('/packages', {
+export const getPackages = (category, packageCategory, destination, options = {}) => api.get('/packages', {
   params: {
     ...(category ? { category } : {}),
     ...(packageCategory ? { packageCategory } : {}),
     ...(destination ? { destination } : {}),
+    ...(options.upcoming ? { upcoming: 'true' } : {}),
   },
 })
 export const getPackagesByCategory = (packageCategory) => getPackages('', packageCategory)
 export const getPackagesByDestination = (destination) => getPackages('', '', destination)
+export const getUpcomingPackages = () => getPackages('', '', '', { upcoming: true })
 export const getAdminPackages = () => api.get('/packages', { params: { includeInactive: true } })
 export const getPackage = (id) => api.get(`/packages/${id}`)
 export const createPackage = (payload) => api.post('/packages', payload)

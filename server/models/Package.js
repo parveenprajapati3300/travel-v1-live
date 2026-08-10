@@ -27,6 +27,7 @@ const packageSchema = new mongoose.Schema(
     transport: { type: String, default: '', trim: true },
     gallery: [{ type: String, trim: true }],
     reviews: [{ type: String, trim: true }],
+    isUpcoming: { type: Boolean, default: false },
     isActive: { type: Boolean, default: true },
   },
   { timestamps: true },

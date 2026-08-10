@@ -2004,6 +2004,183 @@ p {
   margin: 0.65rem 0 1rem;
 }
 
+.upcoming-packages-section {
+  background: linear-gradient(180deg, #fff 0%, #f4fbff 100%);
+}
+
+.upcoming-showcase {
+  position: relative;
+  display: grid;
+  padding-bottom: 3.8rem;
+}
+
+.upcoming-showcase-banner {
+  position: relative;
+  overflow: hidden;
+  height: 320px;
+  border-radius: 8px;
+  background: #0f2028;
+}
+
+.upcoming-showcase-banner::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(3, 13, 18, 0.74), rgba(3, 13, 18, 0.16) 60%, rgba(3, 13, 18, 0.45)),
+    linear-gradient(180deg, rgba(3, 13, 18, 0.08), rgba(3, 13, 18, 0.2));
+}
+
+.upcoming-showcase-banner img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.upcoming-showcase-banner>div {
+  position: absolute;
+  z-index: 1;
+  left: clamp(2rem, 8vw, 6rem);
+  top: 4.3rem;
+  color: #fff;
+}
+
+.upcoming-showcase-banner h2 {
+  margin: 0;
+  font-size: 32px;
+  font-weight: 950;
+  line-height: 1;
+}
+
+.upcoming-showcase-banner p {
+  max-width: 24rem;
+  margin: 0.8rem 0 0;
+  color: rgba(255, 255, 255, 0.86);
+  font-weight: 800;
+}
+
+.upcoming-card-grid {
+  position: relative;
+  z-index: 2;
+  width: min(980px, calc(100% - 3rem));
+  margin: -7.4rem auto 0;
+}
+
+.upcoming-card-grid-static {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.upcoming-swiper {
+  display: block;
+  overflow: hidden;
+  padding: 0.25rem 0.15rem 0.8rem;
+}
+
+.upcoming-swiper .swiper-wrapper {
+  align-items: stretch;
+}
+
+.upcoming-slide {
+  height: auto;
+}
+
+.upcoming-trip-card {
+  display: block;
+  height: 100%;
+  overflow: hidden;
+  min-height: 280px;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 8px;
+  background: #08101d;
+  box-shadow: 0 20px 45px rgba(15, 45, 70, 0.18);
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
+}
+
+.upcoming-trip-card:hover {
+  color: #fff;
+  transform: translateY(-5px);
+  box-shadow: 0 24px 56px rgba(15, 45, 70, 0.24);
+}
+
+.upcoming-card-image {
+  position: relative;
+  height: 148px;
+}
+
+.upcoming-card-image img,
+.upcoming-card-media {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.upcoming-calendar {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  display: grid;
+  place-items: center;
+  width: 2.65rem;
+  height: 2.65rem;
+  border-radius: 50%;
+  color: #0a1522;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.2);
+}
+
+.upcoming-card-copy {
+  display: grid;
+  gap: 0.35rem;
+  padding: 1rem 0.9rem 1.05rem;
+  text-align: center;
+}
+
+.upcoming-card-copy h3 {
+  margin: 0;
+  font-size: 0.94rem;
+  font-weight: 950;
+  line-height: 1.25;
+  /* text-transform: uppercase; */
+}
+
+.upcoming-card-copy p,
+.upcoming-card-copy strong {
+  margin: 0;
+  font-size: 0.88rem;
+  font-weight: 850;
+}
+
+.upcoming-card-copy p {
+  color: rgba(255, 255, 255, 0.84);
+}
+
+.upcoming-card-copy strong {
+  color: #fff;
+}
+
+.upcoming-empty {
+  grid-column: 1 / -1;
+}
+
+.upcoming-view-all {
+  justify-self: end;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 1.2rem;
+  color: var(--button-primary);
+  font-size: 0.84rem;
+  font-weight: 950;
+  text-decoration: none;
+}
+
+.upcoming-view-all:hover {
+  color: var(--button-secondary);
+}
+
 .community-section {
   background:
     linear-gradient(120deg, rgba(248, 250, 252, 0.96), rgba(255, 255, 255, 0.82)),
@@ -5459,6 +5636,14 @@ body.gallery-lightbox-open {
     height: 260px;
   }
 
+  .upcoming-card-grid {
+    width: calc(100% - 2rem);
+  }
+
+  .upcoming-card-grid-static {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .why-premium-layout {
     grid-template-columns: 1fr;
   }
@@ -5547,6 +5732,34 @@ body.gallery-lightbox-open {
   .home-faq-accordion .accordion-button {
     min-height: 4.6rem;
     font-size: 0.95rem;
+  }
+
+  .upcoming-showcase {
+    padding-bottom: 1rem;
+  }
+
+  .upcoming-showcase-banner {
+    height: 220px;
+  }
+
+  .upcoming-showcase-banner>div {
+    left: 1.4rem;
+    top: 2rem;
+    right: 1.4rem;
+  }
+
+  .upcoming-card-grid {
+    width: calc(100% - 0.75rem);
+    margin-top: -3.4rem;
+  }
+
+  .upcoming-card-grid-static {
+    grid-template-columns: 1fr;
+  }
+
+  .upcoming-view-all {
+    justify-self: center;
+    margin-top: 1.25rem;
   }
 
   .admin-nav button,

@@ -40,6 +40,12 @@ const toBoolean = (value) => {
   return value === 'active' || value === 'true'
 }
 
+const toOptionalBoolean = (value) => {
+  if (value === undefined || value === null) return false
+  if (typeof value === 'boolean') return value
+  return value === 'active' || value === 'true' || value === 'yes'
+}
+
 const escapeRegex = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 
 const normalizePackagePayload = (body) => ({
@@ -62,6 +68,7 @@ const normalizePackagePayload = (body) => ({
   transport: body.transport || '',
   gallery: toList(body.gallery),
   reviews: toList(body.reviews),
+  isUpcoming: toOptionalBoolean(body.isUpcoming),
   isActive: toBoolean(body.isActive),
 })
 
@@ -69,6 +76,7 @@ export const getPackages = async (req, res) => {
   const filter = {}
   if (req.query.category) filter.category = req.query.category
   if (req.query.packageCategory) filter.packageCategories = new RegExp(`^${escapeRegex(req.query.packageCategory)}$`, 'i')
+  if (req.query.upcoming === 'true') filter.isUpcoming = true
   if (req.query.destination) {
     const destination = escapeRegex(req.query.destination)
     filter.$or = [

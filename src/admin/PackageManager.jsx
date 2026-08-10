@@ -41,6 +41,7 @@ const initialForm = {
   transport: '',
   gallery: '',
   reviews: '',
+  isUpcoming: false,
   isActive: true,
 }
 
@@ -91,6 +92,9 @@ function PackageManager({ packages, destinations = [], categories = [], onCreate
       }
       if (name === 'isActive') {
         return { ...current, isActive: value === 'active' }
+      }
+      if (name === 'isUpcoming') {
+        return { ...current, isUpcoming: value === 'upcoming' }
       }
       return { ...current, [name]: value }
     })
@@ -256,6 +260,7 @@ function PackageManager({ packages, destinations = [], categories = [], onCreate
       transport: item.transport || '',
       gallery: listToText(item.gallery),
       reviews: listToText(item.reviews),
+      isUpcoming: item.isUpcoming ?? false,
       isActive: item.isActive ?? true,
     })
     setError('')
@@ -347,6 +352,13 @@ function PackageManager({ packages, destinations = [], categories = [], onCreate
                 <Form.Select name="isActive" value={form.isActive ? 'active' : 'inactive'} onChange={updateField}>
                   <option value="active">Active</option>
                   <option value="inactive">Inactive</option>
+                </Form.Select>
+              </Col>
+              <Col md={4}>
+                <Form.Label>Upcoming Section</Form.Label>
+                <Form.Select name="isUpcoming" value={form.isUpcoming ? 'upcoming' : 'normal'} onChange={updateField}>
+                  <option value="normal">Normal Package</option>
+                  <option value="upcoming">Show In Upcoming</option>
                 </Form.Select>
               </Col>
               <Col md={8} data-package-field="title">
@@ -524,6 +536,7 @@ function PackageManager({ packages, destinations = [], categories = [], onCreate
               <th>Categories</th>
               <th>Duration</th>
               <th>Price</th>
+              <th>Upcoming</th>
               <th>Status</th>
               <th>Actions</th>
             </tr>
@@ -540,6 +553,7 @@ function PackageManager({ packages, destinations = [], categories = [], onCreate
                 <td className="admin-category-cell">{item.packageCategories?.join(', ') || '-'}</td>
                 <td>{item.duration}</td>
                 <td>Rs {Number(item.price).toLocaleString('en-IN')}</td>
+                <td><span className={`status-pill ${item.isUpcoming ? 'done' : ''}`}>{item.isUpcoming ? 'Yes' : 'No'}</span></td>
                 <td><span className={`status-pill ${item.isActive === false ? '' : 'done'}`}>{item.isActive === false ? 'Inactive' : 'Active'}</span></td>
                 <td>
                   <div className="table-actions">
@@ -550,7 +564,7 @@ function PackageManager({ packages, destinations = [], categories = [], onCreate
               </tr>
             ))}
             {!packages.length && (
-              <tr><td colSpan="8" className="text-center text-muted py-4">No packages uploaded yet.</td></tr>
+              <tr><td colSpan="9" className="text-center text-muted py-4">No packages uploaded yet.</td></tr>
             )}
           </tbody>
         </Table>

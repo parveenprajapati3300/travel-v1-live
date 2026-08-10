@@ -32,7 +32,7 @@ import recognition6 from '../assets/recognitions/recognition-6.png'
 import recognition7 from '../assets/recognitions/recognition-7.png'
 import recognition8 from '../assets/recognitions/recognition-8.png'
 import recognition9 from '../assets/recognitions/recognition-9.png'
-import { getAdminHotSellingTrips, getCategories, getDestinations, getPackages, getPackagesByCategory } from '../services/api'
+import { getAdminHotSellingTrips, getCategories, getDestinations, getPackages, getPackagesByCategory, getUpcomingPackages } from '../services/api'
 import { slugify } from '../utils/slug'
 
 const travelerStories = [
@@ -234,6 +234,7 @@ function Home() {
   const [homeDestinations, setHomeDestinations] = useState([])
   const [homeCategories, setHomeCategories] = useState([])
   const [groupTrips, setGroupTrips] = useState([])
+  const [upcomingTrips, setUpcomingTrips] = useState([])
   const [honeymoonTrips, setHoneymoonTrips] = useState([])
   const [weekendTrips, setWeekendTrips] = useState([])
   const [hillTrips, setHillTrips] = useState([])
@@ -253,6 +254,7 @@ function Home() {
       getDestinations().then((response) => ['destinations', response.data]),
       getCategories().then((response) => ['categories', response.data]),
       getPackagesByCategory('Group Tour').then((response) => ['group', response.data]),
+      getUpcomingPackages().then((response) => ['upcoming', response.data]),
       getPackagesByCategory('Honeymoon Tour').then((response) => ['honeymoon', response.data]),
       getPackagesByCategory('Weekend Tour').then((response) => ['weekend', response.data]),
       getPackagesByCategory('Hill Station Tour').then((response) => ['hill', response.data]),
@@ -267,6 +269,7 @@ function Home() {
           destinations: [],
           categories: [],
           group: [],
+          upcoming: [],
           honeymoon: [],
           weekend: [],
           hill: [],
@@ -287,6 +290,7 @@ function Home() {
         setHomeDestinations(nextData.destinations)
         setHomeCategories(nextData.categories)
         setGroupTrips(nextData.group)
+        setUpcomingTrips(nextData.upcoming)
         setHoneymoonTrips(nextData.honeymoon)
         setWeekendTrips(nextData.weekend)
         setHillTrips(nextData.hill)
@@ -300,6 +304,7 @@ function Home() {
         setHomeDestinations([])
         setHomeCategories([])
         setGroupTrips([])
+        setUpcomingTrips([])
         setHoneymoonTrips([])
         setWeekendTrips([])
         setHillTrips([])
@@ -565,6 +570,75 @@ function Home() {
         </Container>
       </section>
 
+        <section className="section upcoming-packages-section">
+        <Container>
+          <div className="upcoming-showcase">
+            <div className="upcoming-showcase-banner">
+              <img src={tripRowBanners.adventure} alt="" />
+              <div>
+                <h2>Upcoming Trips</h2>
+                <p>Fixed departures, seasonal routes, and curated trips opening soon.</p>
+              </div>
+            </div>
+            {loading ? (
+              <div className="upcoming-card-grid upcoming-card-grid-static">
+                {groupTripSkeletons.slice(0, 4).map((slot) => (
+                  <article className="upcoming-trip-card card-skeleton" key={`upcoming-skeleton-${slot}`} aria-busy="true">
+                    <span className="card-skeleton-media upcoming-card-media" />
+                    <span className="card-skeleton-line card-skeleton-line-lg" />
+                    <span className="card-skeleton-line card-skeleton-line-md" />
+                    <span className="card-skeleton-line card-skeleton-line-sm" />
+                  </article>
+                ))}
+              </div>
+            ) : upcomingTrips.length ? (
+              <Swiper
+                className="upcoming-card-grid upcoming-swiper"
+                modules={[Autoplay]}
+                slidesPerView={4}
+                slidesPerGroup={1}
+                spaceBetween={18}
+                loop={upcomingTrips.length > 4}
+                speed={850}
+                autoplay={{ delay: 1900, disableOnInteraction: false, pauseOnMouseEnter: true }}
+                grabCursor
+                breakpoints={{
+                  0: { slidesPerView: 1.2, spaceBetween: 14 },
+                  576: { slidesPerView: 2, spaceBetween: 16 },
+                  768: { slidesPerView: 3, spaceBetween: 18 },
+                  992: { slidesPerView: 4, spaceBetween: 18 },
+                }}
+              >
+                {upcomingTrips.map((trip) => (
+                  <SwiperSlide className="upcoming-slide" key={trip._id || trip.id}>
+                    <Link className="upcoming-trip-card" to={`/package/${trip.id}`} data-aos="fade-up">
+                      <div className="upcoming-card-image">
+                        <img src={trip.image} alt={trip.title} />
+                        <span className="upcoming-calendar"><FaCalendarDays /></span>
+                      </div>
+                      <div className="upcoming-card-copy">
+                        <h3>{trip.title}</h3>
+                        <p>{trip.packageDestination || trip.location?.split(',')[0]} - {formatCardDuration(trip.duration)}</p>
+                        <strong>Starts @ Rs {Number(trip.price).toLocaleString('en-IN')}</strong>
+                      </div>
+                    </Link>
+                  </SwiperSlide>
+                ))}
+              </Swiper>
+            ) : (
+              <div className="upcoming-card-grid">
+                <div className="empty-state-card upcoming-empty">
+                  <h3>No upcoming trips added yet</h3>
+                  <p>Edit a package from admin and select Show In Upcoming.</p>
+                </div>
+              </div>
+            )}
+            <Link className="upcoming-view-all" to="/upcoming-packages">View All <FaArrowRight /></Link>
+          </div>
+        </Container>
+      </section>
+
+
       <section className="section soft-bg">
         <Container>
           <div className="section-title-row">
@@ -660,44 +734,7 @@ function Home() {
         )}
       </Modal>
 
-      <section className="section soft-bg">
-        <Container>
-          <SectionHeading eyebrow="Upcoming Group Trips" title="Fixed Departures With Fellow Travelers" text="Join curated group adventures with shared energy, managed stays, transport, and on-trip coordination." />
-          <Row className="g-4">
-            {loading ? groupTripSkeletons.map((slot) => (
-              <Col md={4} key={`group-trip-skeleton-${slot}`}>
-                <article className="group-trip-card group-trip-card-skeleton card-skeleton" aria-busy="true">
-                  <div className="card-skeleton-media group-trip-skeleton-media" />
-                  <div>
-                    <span className="card-skeleton-line card-skeleton-line-xs" />
-                    <h3><span className="card-skeleton-line card-skeleton-line-lg" /></h3>
-                    <span className="card-skeleton-link" />
-                  </div>
-                </article>
-              </Col>
-            )) : groupTrips.length ? groupTrips.slice(0, 3).map((trip) => (
-              <Col md={4} key={trip._id || trip.id}>
-                <article className="group-trip-card" data-aos="fade-up">
-                  <img src={trip.image} alt={trip.title} />
-                  <div>
-                    <span><FaCalendarDays /> {trip.duration}</span>
-                    <h3>{trip.title}</h3>
-                    <Button as={Link} to={`/package/${trip.id}`} className="btn-gradient">View Details</Button>
-                  </div>
-                </article>
-              </Col>
-            )) : (
-              <Col xs={12}>
-                <div className="empty-state-card">
-                  <h3>No group trips added yet</h3>
-                  <p>Create packages and select Group Tour category from admin.</p>
-                </div>
-              </Col>
-            )}
-          </Row>
-        </Container>
-      </section>
-
+    
       <section className="section home-blogs-section">
         <Container>
           <SectionHeading eyebrow="Blogs" title="Our Blogs" />
