@@ -69,7 +69,8 @@ p {
 ========================= */
 .site-nav {
   padding: 0.48rem 0;
-  transition: all 0.25s ease;
+  min-height: 72px;
+  transition: background-color 0.25s ease, box-shadow 0.25s ease, backdrop-filter 0.25s ease;
   background: rgba(255, 255, 255, 0.98);
   backdrop-filter: blur(14px);
   box-shadow: 0 14px 36px rgba(11, 38, 54, 0.1);
@@ -84,11 +85,11 @@ p {
 .site-nav .navbar-collapse.show,
 .site-nav .navbar-collapse.collapsing {
   background: #fff;
- box-shadow: rgba(0, 0, 0, 0.25) 0px 0.0625em 0.0625em, rgba(0, 0, 0, 0.25) 0px 0.125em 0.5em, rgba(255, 255, 255, 0.1) 0px 0px 0px 1px inset;
+  box-shadow: rgba(0, 0, 0, 0.25) 0px 0.0625em 0.0625em, rgba(0, 0, 0, 0.25) 0px 0.125em 0.5em, rgba(255, 255, 255, 0.1) 0px 0px 0px 1px inset;
 }
 
 @media (min-width: 992px) {
-.site-nav.is-scrolled {
+  .site-nav.is-scrolled {
     background: rgba(255, 255, 255, 0.98);
     backdrop-filter: blur(14px);
     box-shadow: 0 14px 36px rgba(11, 38, 54, 0.1);
@@ -128,20 +129,20 @@ p {
 
 .site-nav .nav-link {
   color: var(--ink);
-  font-weight: 600;
+  font-family: Montserrat, system-ui, ui-sans-serif, sans-serif !important;
+  font-weight: 700;
   width: 100%;
   border-radius: 8px;
   padding: 0.42rem 0.6rem !important;
-  font-size: 0.94rem;
+  font-size: 16px;
+  line-height: 1.2;
   white-space: nowrap;
+  transition: color 0.2s ease, background-color 0.2s ease;
 }
 
 .site-nav.is-home-top .nav-link {
   color: #fff;
   text-shadow: 0 2px 10px rgba(3, 9, 18, 0.32);
-  font-weight: 700;
-  font-family: Montserrat, system-ui, ui-sans-serif, sans-serif !important;
-  font-size: 16px;
 }
 
 .site-nav.is-home-top .nav-link:hover,
@@ -179,10 +180,13 @@ p {
   border-radius: 8px;
   padding: 0.42rem 0.6rem;
   color: var(--ink);
-  font-size: 0.9rem;
-  font-weight: 600;
+  font-family: Montserrat, system-ui, ui-sans-serif, sans-serif !important;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.2;
   white-space: nowrap;
   background: transparent;
+  transition: color 0.2s ease, background-color 0.2s ease;
 }
 
 .nav-more-toggle svg {
@@ -302,7 +306,7 @@ p {
 }
 
 .site-nav.is-home-top .nav-call {
-  padding: 0.35rem 0.6rem;
+  padding: 0;
   border-radius: 999px;
 }
 
