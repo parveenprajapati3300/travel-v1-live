@@ -642,7 +642,7 @@ function Home() {
       <section className="section soft-bg">
         <Container>
           <div className="section-title-row">
-            <SectionHeading eyebrow="Themes" title="Holidays By Theme" text="Choose a travel style and see packages created under that category." />
+            <SectionHeading eyebrow="Package Categories" title="Holiday By Package Category" text="Choose a package category and see packages created under that category." />
             <Button as={Link} to="/categories" variant="outline-dark mb-4">View All</Button>
           </div>
           <Row className="g-4">

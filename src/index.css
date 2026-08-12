@@ -877,7 +877,8 @@ p {
 
 .search-overlay-form {
   background: rgba(255, 255, 255, 0.98);
-  box-shadow: 0 14px 34px rgba(7, 28, 39, 0.12);
+  /* box-shadow: 0 14px 34px rgba(7, 28, 39, 0.12); */
+  box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
 }
 
 .search-overlay-form>svg {
@@ -982,7 +983,6 @@ p {
 .search-overlay-form {
   min-height: 4rem;
   padding: 0.32rem;
-  box-shadow: 0 14px 34px rgba(7, 28, 39, 0.12);
 }
 
 .search-overlay-results {
