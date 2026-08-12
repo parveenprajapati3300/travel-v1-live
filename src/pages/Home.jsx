@@ -796,7 +796,7 @@ function Home() {
             </div>
             <div className="why-premium-copy" data-aos="fade-left">
               <span className="eyebrow">Why Choose Us</span>
-              <h2>Why TNT Tour and Travels</h2>
+              <h2>Why Choose TripsNThrills</h2>
               <p className="why-quote">“A well-planned journey should feel effortless from the first call to the final day.”</p>
               <p>We plan every journey with hand-picked routes, comfortable stays, reliable transport, and quick support, so your holiday feels smooth from booking to return.</p>
               <p>No third-party dependency for critical trip flow. Transport, stay, route, itinerary, and support are managed as one travel experience by our team.</p>

@@ -13,10 +13,10 @@ function Footer() {
             <img className="footer-logo" src={tripsnThrillsLogo} alt="TripsNThrills" />
             <p>Custom holiday packages, group trips, family tours, and expert travel support from New Delhi.</p>
             <div className="social-links">
-              <a href="https://instagram.com" aria-label="Instagram"><FaInstagram /></a>
-              <a href="https://facebook.com" aria-label="Facebook"><FaFacebookF /></a>
-              <a href="https://youtube.com" aria-label="YouTube"><FaYoutube /></a>
-              <a href="https://linkedin.com" aria-label="LinkedIn"><FaLinkedinIn /></a>
+              <a className="social-instagram" href="https://instagram.com" aria-label="Instagram"><FaInstagram /></a>
+              <a className="social-facebook" href="https://facebook.com" aria-label="Facebook"><FaFacebookF /></a>
+              <a className="social-youtube" href="https://youtube.com" aria-label="YouTube"><FaYoutube /></a>
+              <a className="social-linkedin" href="https://linkedin.com" aria-label="LinkedIn"><FaLinkedinIn /></a>
             </div>
           </Col>
           <Col md={4} lg={2}>
