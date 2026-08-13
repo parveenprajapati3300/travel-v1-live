@@ -951,7 +951,7 @@ function Home() {
         </Container>
       </section>
 
-      <section className="section community-section" id="community">
+      {/* <section className="section community-section" id="community">
         <Container>
           <Row className="g-4 align-items-center">
             <Col lg={6}>
@@ -980,7 +980,7 @@ function Home() {
             </Col>
           </Row>
         </Container>
-      </section>
+      </section> */}
 
     </>
   )

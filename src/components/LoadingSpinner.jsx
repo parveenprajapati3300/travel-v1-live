@@ -5,7 +5,7 @@ function LoadingSpinner() {
     <div className="loader-screen">
       <div className="loader-card">
         <Spinner animation="border" role="status" />
-        <strong>Curating your escape</strong>
+        <strong>TripsNThrills</strong>
       </div>
     </div>
   )

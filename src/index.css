@@ -1011,7 +1011,7 @@ p {
 ========================= */
 .section,
 .page-section {
-  padding: 5.5rem 0;
+  padding: 3.55rem 0;
 }
 
 .page-section {
@@ -1065,7 +1065,7 @@ p {
 
 .home-trip-stack {
   display: grid;
-  gap: clamp(4rem, 7vw, 6.25rem);
+  gap: clamp(2rem, 3.4vw, 3.2rem);
 }
 
 .home-trip-row {
@@ -1075,7 +1075,7 @@ p {
   max-width: 100%;
   min-height: 580px;
   margin-inline: auto;
-  padding: 0 0 4.2rem;
+  padding: 0 0 2.1rem;
 }
 
 .home-trip-banner {
@@ -6032,7 +6032,7 @@ body.gallery-lightbox-open {
 
   .section,
   .page-section {
-    padding: 4.5rem 0;
+    padding: 2.85rem 0;
   }
 
   .section-title-row {
@@ -6046,7 +6046,7 @@ body.gallery-lightbox-open {
 
   .home-trip-row {
     min-height: 0;
-    padding-bottom: 2rem;
+    padding-bottom: 1rem;
   }
 
   .home-trip-mobile-head {
